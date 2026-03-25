@@ -235,7 +235,7 @@ function verPaciente(paciente: Paciente) {
 }
 
 function editarPaciente(paciente: Paciente) {
-  // router.push(`/pacientes/${paciente.id}/editar`)  ← futuro
+  router.push(`/pacientes/${paciente.id}/editar`)
 }
 
 function onPacienteGuardado(datos: any) {

@@ -58,6 +58,11 @@ const router = createRouter({
           component: () => import('../views/pacientes/VerHistorialPacienteView.vue'),
         },
         {
+          path: 'pacientes/:id/editar',
+          name: 'editar-paciente',
+          component: () => import('../views/pacientes/EditarPacienteView.vue'),
+        },
+        {
           path: 'servicios',
           name: 'servicios',
           component: () => import('../views/servicios/ServiciosView.vue'),

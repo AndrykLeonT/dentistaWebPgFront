@@ -15,7 +15,10 @@
         <h1 class="text-blue-950 text-3xl font-normal leading-9">Historial del Paciente</h1>
         <p class="text-slate-600 text-sm leading-5">Expediente completo y gestión de información</p>
       </div>
-      <button class="h-9 px-4 bg-blue-500 hover:bg-blue-600 rounded-md text-white text-sm font-medium transition cursor-pointer flex items-center justify-center">
+      <button
+        @click="editarPaciente"
+        class="h-9 px-4 bg-blue-500 hover:bg-blue-600 rounded-md text-white text-sm font-medium transition cursor-pointer flex items-center justify-center"
+      >
         Editar Datos
       </button>
     </div>
@@ -55,20 +58,43 @@
 
     <!-- Tabs -->
     <div class="p-1 bg-sky-100 rounded-xl flex gap-1 max-w-fit">
-      <button class="px-3 py-1.5 bg-white rounded-lg text-blue-950 text-sm font-medium shadow-sm outline outline-[1px] outline-black/5 cursor-pointer">
+      <button
+        @click="tabActiva = 'info'"
+        class="px-3 py-1.5 rounded-lg text-blue-950 text-sm font-medium transition cursor-pointer"
+        :class="
+          tabActiva === 'info'
+            ? 'bg-white shadow-sm outline outline-[1px] outline-black/5'
+            : 'hover:bg-white/50'
+        "
+      >
         Información Personal
       </button>
-      <button class="px-3 py-1.5 text-blue-950 text-sm font-medium hover:bg-white/50 rounded-lg transition cursor-pointer">
-        Citas (2)
+      <button
+        @click="tabActiva = 'citas'"
+        class="px-3 py-1.5 rounded-lg text-blue-950 text-sm font-medium transition cursor-pointer"
+        :class="
+          tabActiva === 'citas'
+            ? 'bg-white shadow-sm outline outline-[1px] outline-black/5'
+            : 'hover:bg-white/50'
+        "
+      >
+        Citas ({{ citasPaciente.length }})
       </button>
-      <button class="px-3 py-1.5 text-blue-950 text-sm font-medium hover:bg-white/50 rounded-lg transition cursor-pointer">
-        Pagos (1)
+      <button
+        @click="tabActiva = 'pagos'"
+        class="px-3 py-1.5 rounded-lg text-blue-950 text-sm font-medium transition cursor-pointer"
+        :class="
+          tabActiva === 'pagos'
+            ? 'bg-white shadow-sm outline outline-[1px] outline-black/5'
+            : 'hover:bg-white/50'
+        "
+      >
+        Pagos ({{ pagosPaciente.length }})
       </button>
     </div>
 
-    <!-- Cards Layout -->
-    <div class="grid grid-cols-2 gap-6 w-full pb-8">
-      
+    <!-- Información Personal -->
+    <div v-if="tabActiva === 'info'" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full pb-8">
       <!-- Datos Personales -->
       <div class="bg-white rounded-xl outline outline-[1px] outline-blue-200 p-6 flex flex-col gap-6">
         <div class="flex items-center gap-2">
@@ -151,12 +177,12 @@
       </div>
 
       <!-- Contacto de Emergencia -->
-      <div class="bg-white rounded-xl outline outline-[1px] outline-blue-200 p-6 flex flex-col gap-6">
+      <div class="bg-white rounded-xl outline outline-[1px] outline-blue-200 p-6 flex flex-col gap-6 md:col-span-2">
         <div class="flex items-center gap-2">
           <PhoneCall class="w-5 h-5 text-blue-500" />
           <h2 class="text-blue-950 text-base font-medium">Contacto de Emergencia</h2>
         </div>
-        <div class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <div class="text-slate-600 text-sm mb-1">Nombre</div>
             <div class="text-blue-950 text-base">Juan García</div>
@@ -167,14 +193,216 @@
           </div>
         </div>
       </div>
+    </div>
 
+    <!-- Citas -->
+    <div v-else-if="tabActiva === 'citas'" class="w-full pb-8">
+      <div class="bg-white rounded-xl outline outline-[1px] outline-blue-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-blue-200 flex items-center gap-2">
+          <Calendar class="w-5 h-5 text-blue-500" />
+          <div>
+            <h2 class="text-blue-950 text-base font-medium">Historial de Citas</h2>
+            <p class="text-slate-600 text-sm">Todas las citas del paciente</p>
+          </div>
+        </div>
+
+        <div v-if="citasPaciente.length === 0" class="px-6 py-10 text-center text-slate-600 text-sm">
+          No hay citas registradas para este paciente
+        </div>
+
+        <div v-else class="p-6 flex flex-col gap-3">
+          <div
+            v-for="cita in citasPaciente"
+            :key="cita.id"
+            class="p-4 rounded-lg border"
+            style="border-color: #b5d4f4; background-color: #ffffff"
+          >
+            <div class="flex flex-col gap-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <p class="text-blue-950 text-base font-medium">
+                  {{ cita.fechaLarga }}
+                </p>
+                <span
+                  class="px-2 py-0.5 rounded-md text-white text-xs font-medium"
+                  :style="{
+                    backgroundColor: getEstadoBadge(cita.estado).bg,
+                    color: getEstadoBadge(cita.estado).color,
+                  }"
+                >
+                  {{ cita.estado }}
+                </span>
+              </div>
+              <p class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Hora:</span>
+                {{ cita.horaInicio }} - {{ cita.horaFin }}
+              </p>
+              <p class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Servicio:</span>
+                {{ cita.servicio }}
+              </p>
+              <p class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Dentista:</span>
+                {{ cita.dentista }}
+              </p>
+
+              <p v-if="cita.motivo" class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Motivo:</span>
+                {{ cita.motivo }}
+              </p>
+
+              <div v-if="cita.notasClinicas" class="mt-1 p-2 rounded bg-sky-100">
+                <p class="text-blue-950 text-sm">
+                  <span class="font-medium">Notas clínicas:</span>
+                  {{ cita.notasClinicas }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagos -->
+    <div v-else class="w-full pb-8">
+      <div class="bg-white rounded-xl outline outline-[1px] outline-blue-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-blue-200 flex items-center gap-2">
+          <DollarSign class="w-5 h-5 text-blue-500" />
+          <div>
+            <h2 class="text-blue-950 text-base font-medium">Historial de Pagos</h2>
+            <p class="text-slate-600 text-sm">Todos los pagos realizados por el paciente</p>
+          </div>
+        </div>
+
+        <div v-if="pagosPaciente.length === 0" class="px-6 py-10 text-center text-slate-600 text-sm">
+          No hay pagos registrados para este paciente
+        </div>
+
+        <div v-else class="p-6 flex flex-col gap-3">
+          <div
+            v-for="pago in pagosPaciente"
+            :key="pago.id"
+            class="p-4 rounded-lg border flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
+            style="border-color: #b5d4f4; background-color: #ffffff"
+          >
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <FileText class="w-4 h-4 text-slate-600" />
+                <p class="text-blue-950 text-base font-medium">Folio: {{ pago.folio }}</p>
+              </div>
+              <p class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Fecha:</span>
+                {{ pago.fecha }}
+              </p>
+              <p class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Servicio:</span>
+                {{ pago.servicio }}
+              </p>
+              <p class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Método de Pago:</span>
+                {{ pago.metodoPago }}
+              </p>
+              <p class="text-slate-600 text-sm">
+                <span class="text-blue-950 font-medium">Total:</span>
+                ${{ pago.total.toLocaleString('es-MX') }} MXN
+              </p>
+              <p v-if="pago.descuento > 0" class="text-sm text-emerald-700 mt-1">
+                <span class="font-medium">Descuento aplicado:</span>
+                ${{ pago.descuento.toLocaleString('es-MX') }} MXN
+              </p>
+            </div>
+
+            <div class="text-right">
+              <p class="text-emerald-700 text-lg font-semibold">
+                ${{ pago.total.toLocaleString('es-MX') }}
+              </p>
+              <p class="text-slate-600 text-xs">MXN</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { ArrowLeft, User, Phone, MapPin, Heart, PhoneCall, AlertCircle } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import {
+  AlertCircle,
+  ArrowLeft,
+  Calendar,
+  DollarSign,
+  FileText,
+  Heart,
+  MapPin,
+  Phone,
+  PhoneCall,
+  User,
+} from 'lucide-vue-next'
 
 const router = useRouter()
+const route = useRoute()
+
+const tabActiva = ref<'info' | 'citas' | 'pagos'>('info')
+
+function editarPaciente() {
+  router.push(`/pacientes/${route.params.id}/editar`)
+}
+
+type CitaEstado = 'Confirmada' | 'Programada' | 'En Curso' | 'Completada' | 'Cancelada'
+
+function getEstadoBadge(estado: CitaEstado) {
+  const styles: Record<CitaEstado, { bg: string; color: string }> = {
+    Confirmada: { bg: '#0F8C6E', color: '#ffffff' },
+    Programada: { bg: '#378ADD', color: '#ffffff' },
+    'En Curso': { bg: '#85B7EB', color: '#0C3660' },
+    Completada: { bg: '#B5D4F4', color: '#0C3660' },
+    Cancelada: { bg: '#d4183d', color: '#ffffff' },
+  }
+  return styles[estado] ?? styles.Programada
+}
+
+// Mock data solo para UI (para que coincida con el diseño de Figma).
+const citas = [
+  {
+    id: 'cita-1',
+    pacienteId: '1',
+    fechaLarga: 'viernes, 14 de marzo de 2026',
+    horaInicio: '10:00',
+    horaFin: '11:00',
+    servicio: 'Limpieza Dental',
+    dentista: 'Dr. Carlos Martínez',
+    estado: 'Completada' as CitaEstado,
+    motivo: 'Revisión y limpieza',
+    notasClinicas: 'Sin hallazgos relevantes. Se recomienda control en 6 meses.',
+  },
+  {
+    id: 'cita-2',
+    pacienteId: '1',
+    fechaLarga: 'lunes, 24 de marzo de 2026',
+    horaInicio: '16:30',
+    horaFin: '17:15',
+    servicio: 'Resina',
+    dentista: 'Dra. Ana López',
+    estado: 'Programada' as CitaEstado,
+    motivo: 'Dolor localizado',
+    notasClinicas: '',
+  },
+]
+
+const pagos = [
+  {
+    id: 'pago-1',
+    pacienteId: '1',
+    folio: 'PG-00125',
+    fecha: '14/3/2026',
+    servicio: 'Limpieza Dental',
+    metodoPago: 'Tarjeta',
+    total: 900,
+    descuento: 0,
+  },
+]
+
+const citasPaciente = computed(() => citas.filter((c) => c.pacienteId === String(route.params.id)))
+const pagosPaciente = computed(() => pagos.filter((p) => p.pacienteId === String(route.params.id)))
 </script>
