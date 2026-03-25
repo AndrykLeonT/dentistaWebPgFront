@@ -129,18 +129,19 @@ const getEstadoClass = (estado: string) => {
 </script>
 
 <template>
-  <div class="space-y-8 bg-background">
+  <div class="min-h-full bg-background px-4 py-5 sm:px-6 sm:py-6 md:px-7 md:py-7">
+    <div class="mx-auto w-full max-w-[1400px] space-y-6">
     <!-- Header -->
-    <div class="flex flex-row items-center justify-between">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-[32px] font-medium tracking-tight text-foreground">Inventario</h1>
-        <p class="text-[15px] mt-0.5 text-muted-foreground">
+        <h1 class="text-[34px] sm:text-[40px] lg:text-[48px] leading-none font-medium tracking-tight text-foreground drop-shadow-[0_1px_0_rgba(255,255,255,0.4)]">Inventario</h1>
+        <p class="text-sm sm:text-[15px] mt-2 text-muted-foreground">
           Control de materiales e insumos dentales
         </p>
       </div>
       <Dialog v-model:open="isDialogOpen">
         <DialogTrigger as-child>
-          <Button @click="handleNewInsumo" class="bg-primary text-primary-foreground hover:opacity-90 w-auto shrink-0 rounded-lg shadow-sm font-medium px-5 py-2.5 h-auto ml-4">
+          <Button @click="handleNewInsumo" class="bg-primary text-primary-foreground hover:brightness-110 transition-all duration-200 w-full sm:w-auto shrink-0 rounded-xl shadow-md font-medium px-5 h-11 sm:ml-4">
             <Plus class="w-4 h-4 mr-2" />
             Nuevo Insumo
           </Button>
@@ -155,27 +156,27 @@ const getEstadoClass = (estado: string) => {
           <div class="space-y-4 py-4">
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
-                <Label>Código o Clave *</Label>
+                <Label class="font-medium">Código o Clave *</Label>
                 <Input
                   placeholder="INS-001"
                   v-model="formInsumo.codigo"
-                  class="bg-white"
+                  class="bg-input-background"
                 />
               </div>
               <div class="space-y-2">
-                <Label>Nombre del Insumo *</Label>
+                <Label class="font-medium">Nombre del Insumo *</Label>
                 <Input
                   placeholder="Ej: Resina Composite"
                   v-model="formInsumo.nombre"
-                  class="bg-white"
+                  class="bg-input-background"
                 />
               </div>
             </div>
 
             <div class="space-y-2">
-              <Label>Categoría *</Label>
+              <Label class="font-medium">Categoría *</Label>
               <Select v-model="formInsumo.categoria">
-                <SelectTrigger class="bg-white">
+                <SelectTrigger class="bg-input-background">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -185,27 +186,27 @@ const getEstadoClass = (estado: string) => {
             </div>
 
             <div class="space-y-2">
-              <Label>Descripción o Especificaciones</Label>
+              <Label class="font-medium">Descripción o Especificaciones</Label>
               <Textarea
                 placeholder="Describe las características del insumo..."
                 v-model="formInsumo.descripcion"
-                class="bg-white"
+                class="bg-input-background"
               />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
-                <Label>Proveedor Habitual</Label>
+                <Label class="font-medium">Proveedor Habitual</Label>
                 <Input
                   placeholder="Nombre del proveedor"
                   v-model="formInsumo.proveedor"
-                  class="bg-white"
+                  class="bg-input-background"
                 />
               </div>
               <div class="space-y-2">
-                <Label>Unidad de Medida *</Label>
+                <Label class="font-medium">Unidad de Medida *</Label>
                 <Select v-model="formInsumo.unidadMedida">
-                  <SelectTrigger class="bg-white">
+                  <SelectTrigger class="bg-input-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -217,49 +218,49 @@ const getEstadoClass = (estado: string) => {
 
             <div class="grid grid-cols-3 gap-4">
               <div class="space-y-2">
-                <Label>Cantidad Inicial *</Label>
+                <Label class="font-medium">Cantidad Inicial *</Label>
                 <Input
                   type="number"
                   placeholder="100"
                   v-model="formInsumo.cantidadActual"
-                  class="bg-white"
+                  class="bg-input-background"
                 />
               </div>
               <div class="space-y-2">
-                <Label>Nivel Mínimo *</Label>
+                <Label class="font-medium">Nivel Mínimo *</Label>
                 <Input
                   type="number"
                   placeholder="20"
                   v-model="formInsumo.nivelMinimo"
-                  class="bg-white"
+                  class="bg-input-background"
                 />
               </div>
               <div class="space-y-2">
-                <Label>Precio Unitario</Label>
+                <Label class="font-medium">Precio Unitario</Label>
                 <Input
                   type="number"
                   placeholder="50"
                   v-model="formInsumo.precioUnitario"
-                  class="bg-white"
+                  class="bg-input-background"
                 />
               </div>
             </div>
 
             <div class="space-y-2">
-              <Label>Fecha de Caducidad</Label>
+              <Label class="font-medium">Fecha de Caducidad</Label>
               <Input
                 type="date"
                 v-model="formInsumo.fechaCaducidad"
-                class="bg-white"
+                class="bg-input-background"
               />
             </div>
 
             <div class="space-y-2">
-              <Label>Notas Adicionales</Label>
+              <Label class="font-medium">Notas Adicionales</Label>
               <Textarea
                 placeholder="Observaciones..."
                 v-model="formInsumo.notas"
-                class="bg-white"
+                class="bg-input-background"
               />
             </div>
           </div>
@@ -267,7 +268,7 @@ const getEstadoClass = (estado: string) => {
             <Button variant="outline" @click="isDialogOpen = false">
               Cancelar
             </Button>
-            <Button @click="handleSaveInsumo" style="background-color: #378ADD">
+            <Button @click="handleSaveInsumo" class="bg-primary text-primary-foreground hover:opacity-90">
               {{ selectedInsumo ? 'Actualizar' : 'Guardar' }} Insumo
             </Button>
           </div>
@@ -284,17 +285,17 @@ const getEstadoClass = (estado: string) => {
             </DialogDescription>
           </DialogHeader>
           <div v-if="selectedInsumo" class="space-y-4 py-4">
-            <div class="p-4 rounded-lg" style="background-color: #E6F1FB">
-              <p class="font-medium" style="color: #0C3660">{{ selectedInsumo.nombre }}</p>
-              <p class="text-sm" style="color: #4A6279">
+            <div class="p-4 rounded-lg bg-input-background">
+              <p class="font-medium text-foreground">{{ selectedInsumo.nombre }}</p>
+              <p class="text-sm text-muted-foreground">
                 Stock actual: <strong>{{ selectedInsumo.cantidadActual }}</strong> {{ selectedInsumo.unidadMedida }}
               </p>
             </div>
 
             <div class="space-y-2">
-              <Label>Tipo de Movimiento *</Label>
+              <Label class="font-medium">Tipo de Movimiento *</Label>
               <Select v-model="formStock.tipoMovimiento">
-                <SelectTrigger class="bg-white">
+                <SelectTrigger class="bg-input-background">
                   <SelectValue placeholder="Selecciona" />
                 </SelectTrigger>
                 <SelectContent>
@@ -307,30 +308,30 @@ const getEstadoClass = (estado: string) => {
             </div>
 
             <div class="space-y-2">
-              <Label>Cantidad *</Label>
+              <Label class="font-medium">Cantidad *</Label>
               <Input
                 type="number"
                 placeholder="10"
                 v-model="formStock.cantidad"
-                class="bg-white"
+                class="bg-input-background"
               />
             </div>
 
             <div class="space-y-2">
-              <Label>Fecha del Movimiento</Label>
+              <Label class="font-medium">Fecha del Movimiento</Label>
               <Input
                 type="date"
                 v-model="formStock.fecha"
-                class="bg-white"
+                class="bg-input-background"
               />
             </div>
 
             <div class="space-y-2">
-              <Label>Notas del Movimiento</Label>
+              <Label class="font-medium">Notas del Movimiento</Label>
               <Textarea
                 placeholder="Ej: Compra a proveedor X..."
                 v-model="formStock.notas"
-                class="bg-white"
+                class="bg-input-background"
               />
             </div>
           </div>
@@ -338,7 +339,7 @@ const getEstadoClass = (estado: string) => {
             <Button variant="outline" @click="isUpdateStockOpen = false">
               Cancelar
             </Button>
-            <Button @click="handleSaveStock" style="background-color: #378ADD">
+            <Button @click="handleSaveStock" class="bg-primary text-primary-foreground hover:opacity-90">
               Confirmar Actualización
             </Button>
           </div>
@@ -347,21 +348,21 @@ const getEstadoClass = (estado: string) => {
     </div>
 
     <!-- Alertas de Stock -->
-    <div v-if="alertasActivas > 0" class="w-full flex items-start gap-4 p-4 rounded-xl border border-amber-300 shadow-sm bg-[#FEF9EC] mb-2">
-      <AlertTriangle class="w-6 h-6 mt-0.5 text-amber-500" />
+    <div v-if="alertasActivas > 0" class="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border border-amber-300/90 shadow-sm bg-[#FEF9EC] ring-1 ring-amber-200/70">
+      <AlertTriangle class="w-5 h-5 sm:w-6 sm:h-6 mt-0.5 text-amber-500" />
       <div>
-        <p class="font-medium text-[17px] text-foreground">
+        <p class="font-medium text-xl sm:text-2xl lg:text-[28px] leading-tight text-foreground">
           {{ alertasActivas }} insumo(s) requieren atención
         </p>
-        <p class="text-[15px] mt-0.5 text-muted-foreground">
+        <p class="text-sm sm:text-[15px] mt-2 text-muted-foreground">
           Revisa el inventario para reabastecer los insumos con stock bajo o agotado
         </p>
       </div>
     </div>
 
     <!-- Filtros y Búsqueda -->
-    <div class="flex flex-col sm:flex-row items-center gap-4 p-4 bg-card border border-border rounded-xl shadow-sm">
-      <div class="relative w-full flex items-center h-11 bg-[var(--dental-blue-mist)] rounded-lg px-2">
+    <div class="flex flex-wrap items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-card border border-border rounded-2xl shadow-sm ring-1 ring-[var(--dental-blue-light)]">
+      <div class="relative min-w-0 flex-1 flex items-center h-12 bg-input-background rounded-xl px-3 border border-[var(--dental-blue-medium)] focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
         <Search class="absolute left-3 w-4 h-4 text-muted-foreground" />
         <Input
           placeholder="Buscar por nombre o código..."
@@ -369,7 +370,7 @@ const getEstadoClass = (estado: string) => {
           class="pl-9 h-full border-0 shadow-none focus-visible:ring-0 text-foreground bg-transparent w-full text-sm placeholder:text-muted-foreground"
         />
       </div>
-      <div class="w-full h-11 flex items-center bg-[var(--dental-blue-mist)] rounded-lg px-2">
+      <div class="w-full md:w-[260px] h-12 flex items-center bg-input-background rounded-xl px-3 border border-[var(--dental-blue-medium)] focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
         <Select v-model="filterCategoria">
           <SelectTrigger class="w-full h-full border-0 shadow-none focus:ring-0 bg-transparent text-foreground font-medium text-sm">
             <SelectValue />
@@ -380,7 +381,7 @@ const getEstadoClass = (estado: string) => {
           </SelectContent>
         </Select>
       </div>
-      <div class="w-full h-11 flex items-center bg-[var(--dental-blue-mist)] rounded-lg px-2">
+      <div class="w-full md:w-[220px] h-12 flex items-center bg-input-background rounded-xl px-3 border border-[var(--dental-blue-medium)] focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
         <Select v-model="filterStock">
           <SelectTrigger class="w-full h-full border-0 shadow-none focus:ring-0 bg-transparent text-foreground font-medium text-sm">
             <SelectValue />
@@ -396,56 +397,56 @@ const getEstadoClass = (estado: string) => {
     </div>
 
     <!-- Tabla de Inventario -->
-    <Card class="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-      <div class="p-6 pb-4">
-        <h2 class="text-[17px] font-medium text-foreground">
+    <Card class="bg-card rounded-2xl border border-[var(--dental-blue-light)] shadow-sm overflow-hidden ring-1 ring-[var(--dental-blue-light)]">
+      <div class="px-4 sm:px-6 pt-5 sm:pt-6 pb-4 sm:pb-5">
+        <h2 class="text-[28px] sm:text-[34px] lg:text-[40px] leading-none font-medium text-foreground">
           Inventario de Insumos ({{ filteredInsumos.length }})
         </h2>
       </div>
-      <div class="px-6 pb-6">
+      <div class="px-4 sm:px-6 pb-5 sm:pb-6">
         <div class="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow class="hover:bg-transparent border-b border-border">
-                <TableHead class="text-muted-foreground font-medium text-sm h-12 px-6">Código</TableHead>
-                <TableHead class="text-muted-foreground font-medium text-sm h-12 px-6">Nombre</TableHead>
-                <TableHead class="text-muted-foreground font-medium text-sm h-12 px-6">Categoría</TableHead>
-                <TableHead class="text-muted-foreground font-medium text-sm h-12 px-6">Cantidad</TableHead>
-                <TableHead class="text-muted-foreground font-medium text-sm h-12 px-6">Unidad</TableHead>
-                <TableHead class="text-muted-foreground font-medium text-sm h-12 px-6">Mínimo</TableHead>
-                <TableHead class="text-muted-foreground font-medium text-sm h-12 px-6">Estado</TableHead>
-                <TableHead class="text-muted-foreground font-medium text-sm text-right h-12 px-6">Acciones</TableHead>
+              <TableRow class="hover:bg-transparent border-b border-[var(--dental-blue-light)]">
+                <TableHead class="w-[120px] text-primary font-medium text-sm h-14 px-4">Código</TableHead>
+                <TableHead class="min-w-[220px] text-primary font-medium text-sm h-14 px-4">Nombre</TableHead>
+                <TableHead class="min-w-[200px] text-primary font-medium text-sm h-14 px-4">Categoría</TableHead>
+                <TableHead class="w-[110px] text-primary font-medium text-sm h-14 px-4">Cantidad</TableHead>
+                <TableHead class="w-[100px] text-primary font-medium text-sm h-14 px-4">Unidad</TableHead>
+                <TableHead class="w-[90px] text-primary font-medium text-sm h-14 px-4">Mínimo</TableHead>
+                <TableHead class="w-[130px] text-primary font-medium text-sm h-14 px-4">Estado</TableHead>
+                <TableHead class="w-[120px] text-primary font-medium text-sm text-right h-14 px-4">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="insumo in filteredInsumos" :key="insumo.id" class="border-b border-border last:border-0 hover:bg-muted/50">
-                <TableCell class="font-bold text-foreground py-4 px-6 text-sm">{{ insumo.codigo }}</TableCell>
-                <TableCell class="text-foreground py-4 px-6 text-sm font-normal">{{ insumo.nombre }}</TableCell>
-                <TableCell class="px-6">
-                  <Badge variant="outline" class="bg-muted text-muted-foreground rounded-full px-3 py-1 text-xs border border-border font-medium shadow-none">
+              <TableRow v-for="insumo in filteredInsumos" :key="insumo.id" class="border-b border-[var(--dental-blue-light)] last:border-0 hover:bg-[var(--dental-blue-mist)] transition-colors">
+                <TableCell class="font-bold text-foreground py-5 px-4 text-sm">{{ insumo.codigo }}</TableCell>
+                <TableCell class="text-foreground py-5 px-4 text-sm font-normal">{{ insumo.nombre }}</TableCell>
+                <TableCell class="px-4">
+                  <Badge variant="outline" class="bg-input-background text-primary rounded-full px-3 py-1 text-xs border border-[var(--dental-blue-medium)] font-medium shadow-none">
                     {{ insumo.categoria }}
                   </Badge>
                 </TableCell>
-                <TableCell class="px-6">
+                <TableCell class="px-4">
                   <div class="flex items-center gap-[6px]">
-                    <Package class="w-4 h-4 text-muted-foreground mb-[2px]" />
+                    <Package class="w-4 h-4 text-primary mb-[2px]" />
                     <span class="font-normal text-foreground text-sm">{{ insumo.cantidadActual }}</span>
                   </div>
                 </TableCell>
-                <TableCell class="px-6 text-sm text-muted-foreground font-normal">{{ insumo.unidadMedida }}</TableCell>
-                <TableCell class="px-6 text-sm text-muted-foreground font-normal">{{ insumo.nivelMinimo }}</TableCell>
-                <TableCell class="px-6">
+                <TableCell class="px-4 text-sm text-muted-foreground font-normal">{{ insumo.unidadMedida }}</TableCell>
+                <TableCell class="px-4 text-sm text-muted-foreground font-normal">{{ insumo.nivelMinimo }}</TableCell>
+                <TableCell class="px-4">
                   <!-- Badge condicional -->
-                  <Badge class="rounded-full px-3 py-1 font-medium text-xs shadow-none border-0 tracking-wide" :class="getEstadoClass(insumo.estadoStock)">
+                  <Badge class="rounded-full px-3 py-1 font-medium text-xs shadow-sm border-0 tracking-wide" :class="getEstadoClass(insumo.estadoStock)">
                     {{ insumo.estadoStock }}
                   </Badge>
                 </TableCell>
-                <TableCell class="text-right px-6">
+                <TableCell class="text-right px-4">
                   <div class="flex justify-end gap-2 ml-4">
                     <Button
                       variant="ghost"
                       size="icon"
-                      class="h-auto w-auto p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md"
+                      class="h-auto w-auto p-2 text-primary hover:text-foreground hover:bg-input-background rounded-md transition-colors"
                       @click="handleUpdateStock(insumo)"
                     >
                       <TrendingUp class="w-4 h-4" />
@@ -453,7 +454,7 @@ const getEstadoClass = (estado: string) => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      class="h-auto w-auto p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md"
+                      class="h-auto w-auto p-2 text-primary hover:text-foreground hover:bg-input-background rounded-md transition-colors"
                       @click="handleEditInsumo(insumo)"
                     >
                       <Edit class="w-4 h-4" />
@@ -466,5 +467,6 @@ const getEstadoClass = (estado: string) => {
         </div>
       </div>
     </Card>
+    </div>
   </div>
 </template>
