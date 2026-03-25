@@ -111,9 +111,7 @@
       </table>
     </div>
 
-    <!-- ─────────────────────────────────────────
-         MODAL: REGISTRAR NUEVO USUARIO
-    ───────────────────────────────────────── -->
+    <!--REGISTRAR NUEVO USUARIO-->
     <div v-if="modalNuevoAbierto" class="fixed inset-0 z-50 flex items-center justify-center">
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/40" @click="cerrarModalNuevo"></div>
@@ -134,7 +132,7 @@
         </div>
 
         <div class="mt-5 flex flex-col gap-4">
-          <!-- Nombre + Apellidos -->
+          <!-- Nombre y  Apellidos -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Nombre(s) <span class="text-red-500">*</span></label>
@@ -146,7 +144,7 @@
             </div>
           </div>
 
-          <!-- Correo + Teléfono -->
+          <!-- Correo y  Teléfono -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Correo Electrónico <span class="text-red-500">*</span></label>
@@ -169,7 +167,7 @@
             <p class="text-xs text-slate-400 mt-1">El rol determina los permisos y accesos del usuario en el sistema</p>
           </div>
 
-          <!-- Contraseña temporal -->
+          <!-- Contraseña -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Contraseña Temporal <span class="text-red-500">*</span></label>
             <input v-model="nuevoUsuario.contrasena" type="password" placeholder="••••••••" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-400" />
@@ -196,9 +194,7 @@
       </div>
     </div>
 
-    <!-- ─────────────────────────────────────────
-         MODAL: EDITAR USUARIO
-    ───────────────────────────────────────── -->
+    <!--MODAL: EDITAR USUARIO -->
     <div v-if="modalEditarAbierto && usuarioEditando" class="fixed inset-0 z-50 flex items-center justify-center">
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/40" @click="cerrarModalEditar"></div>
@@ -219,7 +215,7 @@
         </div>
 
         <div class="mt-5 flex flex-col gap-4">
-          <!-- Nombre + Apellidos -->
+          <!-- Nombre y Apellidos -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Nombre(s) <span class="text-red-500">*</span></label>
@@ -231,7 +227,7 @@
             </div>
           </div>
 
-          <!-- Correo + Teléfono -->
+          <!-- Correo y Telefono -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1">Correo Electrónico <span class="text-red-500">*</span></label>
@@ -298,12 +294,12 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 
-// ── Filtros ──────────────────────────────────────────────────────────────────
+//Filtros
 const searchQuery = ref('')
 const rolFiltro = ref('')
 const estadoFiltro = ref('')
 
-// ── Datos ────────────────────────────────────────────────────────────────────
+//Datos
 interface Usuario {
   nombre: string
   iniciales: string
@@ -387,7 +383,7 @@ const rolClase = (rol: string) => {
   return 'bg-slate-400'
 }
 
-// ── Modal Nuevo Usuario ───────────────────────────────────────────────────────
+//Modal Nuevo Usuario
 const modalNuevoAbierto = ref(false)
 
 const nuevoUsuario = reactive({
@@ -431,7 +427,7 @@ function guardarNuevoUsuario() {
   cerrarModalNuevo()
 }
 
-// ── Modal Editar Usuario ──────────────────────────────────────────────────────
+//Modal Editar Usuario
 const modalEditarAbierto = ref(false)
 const usuarioEditando = ref<Usuario | null>(null)
 
