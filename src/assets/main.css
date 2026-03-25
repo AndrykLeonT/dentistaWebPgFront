@@ -1,1 +1,92 @@
 @import 'tailwindcss';
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+}
+
+:root {
+  --radius: 0.625rem; /* 10px */
+  --font-size: 15px;
+
+  /* DentalSys base tokens (obligatorios) */
+  --dental-blue-night: #0c3660;
+  --dental-blue-primary: #1a6fa8;
+  --dental-blue-vivid: #378add;
+  --dental-blue-medium: #85b7eb;
+  --dental-blue-light: #b5d4f4;
+  --dental-blue-mist: #e6f1fb;
+  --dental-white-clinical: #f5f9fc;
+  --dental-green-mint: #0f8c6e;
+  --dental-gray-blue: #4a6279;
+
+  --background: var(--dental-white-clinical);
+  --foreground: var(--dental-blue-night);
+  --card: #ffffff;
+  --card-foreground: var(--dental-blue-night);
+  --popover: #ffffff;
+  --popover-foreground: var(--dental-blue-night);
+
+  /* Tailwind/shadcn tokens */
+  --primary: var(--dental-blue-vivid);
+  --primary-foreground: #ffffff;
+  --secondary: var(--dental-blue-mist);
+  --secondary-foreground: var(--dental-blue-night);
+  --muted: var(--dental-blue-mist);
+  --muted-foreground: var(--dental-gray-blue);
+  --accent: var(--dental-blue-primary);
+  --accent-foreground: #ffffff;
+
+  --success: var(--dental-green-mint);
+  --success-foreground: #ffffff;
+
+  /* Sin stock */
+  --destructive: #e11d48;
+  --destructive-foreground: #ffffff;
+
+  --border: var(--dental-blue-light);
+  --input: var(--dental-blue-medium);
+  --input-background: var(--dental-blue-mist);
+  --ring: var(--dental-blue-primary);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    font-size: var(--font-size);
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
