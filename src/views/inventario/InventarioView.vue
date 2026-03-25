@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Card } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Textarea } from '../components/ui/textarea';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Search, Plus, Edit, Package, AlertTriangle, TrendingUp } from 'lucide-vue-next';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Search, Plus, Edit, Package, AlertTriangle, TrendingUp, CheckCircle2, AlertCircle, XCircle } from 'lucide-vue-next';
 import { mockInsumos } from '@/lib/mock-data';
 import { toast } from 'vue-sonner';
 
@@ -121,27 +121,27 @@ const unidades = ['Pieza', 'Caja', 'Frasco', 'Mililitros', 'Gramos', 'Rollo', 'O
 
 // Función de estilo dinámico para el Badge
 const getEstadoClass = (estado: string) => {
-  if (estado === 'Normal') return 'bg-success text-success-foreground';
-  if (estado === 'Bajo stock') return 'bg-amber-500 text-white';
-  if (estado === 'Sin stock') return 'bg-destructive text-destructive-foreground';
-  return 'bg-muted text-muted-foreground';
+  if (estado === 'Normal') return 'bg-[#DCFCE7] text-[#15803D] hover:bg-[#DCFCE7]';
+  if (estado === 'Bajo stock') return 'bg-[#FEF9C3] text-[#A16207] hover:bg-[#FEF9C3]';
+  if (estado === 'Sin stock') return 'bg-[#FEE2E2] text-[#B91C1C] hover:bg-[#FEE2E2]';
+  return 'bg-slate-100 text-slate-500 hover:bg-slate-100';
 };
 </script>
 
 <template>
-  <div class="min-h-full bg-background px-4 py-5 sm:px-6 sm:py-6 md:px-7 md:py-7">
+  <div class="min-h-full bg-[#F1F5F9] px-4 py-5 sm:px-6 sm:py-6 md:px-7 md:py-7">
     <div class="w-full space-y-6">
     <!-- Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-[32px] sm:text-[34px] leading-none font-medium tracking-tight text-foreground">Inventario</h1>
-        <p class="text-sm sm:text-[15px] mt-2 text-muted-foreground">
+        <h1 class="text-[30px] font-semibold tracking-tight text-[#0C3660] leading-none">Inventario</h1>
+        <p class="text-base font-medium mt-2 text-[#0C3660]">
           Control de materiales e insumos dentales
         </p>
       </div>
       <Dialog v-model:open="isDialogOpen">
         <DialogTrigger as-child>
-          <Button @click="handleNewInsumo" class="bg-primary text-primary-foreground hover:opacity-90 transition-all duration-200 w-full sm:w-auto shrink-0 rounded-[6px] shadow-sm font-medium px-5 h-9 sm:ml-4">
+          <Button @click="handleNewInsumo" class="bg-[#378ADD] hover:bg-[#2c71b8] text-white transition-all duration-200 w-full sm:w-auto shrink-0 rounded-lg shadow-sm font-medium px-5 h-10 sm:ml-4">
             <Plus class="w-4 h-4 mr-2" />
             Nuevo Insumo
           </Button>
@@ -350,32 +350,32 @@ const getEstadoClass = (estado: string) => {
     <!-- Alertas de Stock -->
     <div
       v-if="alertasActivas > 0"
-      class="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-xl border border-amber-500/80 shadow-sm bg-[#FFFBEB]"
+      class="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-xl border border-yellow-200 shadow-sm bg-yellow-100"
     >
-      <AlertTriangle class="w-5 h-5 sm:w-6 sm:h-6 mt-0.5 text-amber-500" />
+      <AlertTriangle class="w-5 h-5 sm:w-6 sm:h-6 mt-0.5 text-yellow-500" />
       <div>
-        <p class="font-medium text-[16px] sm:text-[16px] leading-tight text-foreground">
+        <p class="font-medium text-[16px] sm:text-[16px] leading-tight text-yellow-800">
           {{ alertasActivas }} insumo(s) requieren atención
         </p>
-        <p class="text-[14px] mt-1 text-muted-foreground">
+        <p class="text-[14px] mt-1 text-[#4A6279]">
           Revisa el inventario para reabastecer los insumos con stock bajo o agotado
         </p>
       </div>
     </div>
 
     <!-- Filtros y Búsqueda -->
-    <div class="flex flex-wrap items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-card border border-[var(--dental-blue-light)] rounded-xl shadow-sm">
-      <div class="relative min-w-0 flex-1 flex items-center h-9 bg-transparent rounded-[6px] px-3">
-        <Search class="absolute left-3 w-4 h-4 text-muted-foreground" />
+    <div class="flex flex-wrap items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+      <div class="relative min-w-0 flex-1 flex items-center h-10 border border-slate-200 bg-white rounded-[6px] px-3">
+        <Search class="absolute left-3 w-4 h-4 text-slate-400" />
         <Input
           placeholder="Buscar por nombre o código..."
           v-model="searchTerm"
-          class="pl-9 h-full border-0 shadow-none focus-visible:ring-0 text-foreground bg-transparent w-full text-sm placeholder:text-muted-foreground"
+          class="pl-9 h-full border-0 shadow-none focus-visible:ring-0 text-[#0C3660] bg-transparent w-full text-sm placeholder:text-slate-400"
         />
       </div>
-      <div class="w-full md:w-[260px] h-9 flex items-center bg-transparent rounded-[6px] px-3">
+      <div class="w-full md:w-[260px] h-10 flex items-center border border-slate-200 bg-white rounded-[6px] px-3">
         <Select v-model="filterCategoria">
-          <SelectTrigger class="w-full h-full border-0 shadow-none focus:ring-0 bg-transparent text-foreground font-medium text-sm">
+          <SelectTrigger class="w-full h-full border-0 shadow-none focus:ring-0 bg-transparent text-[#0C3660] font-medium text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -384,9 +384,9 @@ const getEstadoClass = (estado: string) => {
           </SelectContent>
         </Select>
       </div>
-      <div class="w-full md:w-[220px] h-9 flex items-center bg-transparent rounded-[6px] px-3">
+      <div class="w-full md:w-[220px] h-10 flex items-center border border-slate-200 bg-white rounded-[6px] px-3">
         <Select v-model="filterStock">
-          <SelectTrigger class="w-full h-full border-0 shadow-none focus:ring-0 bg-transparent text-foreground font-medium text-sm">
+          <SelectTrigger class="w-full h-full border-0 shadow-none focus:ring-0 bg-transparent text-[#0C3660] font-medium text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -400,47 +400,50 @@ const getEstadoClass = (estado: string) => {
     </div>
 
     <!-- Tabla de Inventario -->
-    <Card class="bg-card rounded-xl border border-[var(--dental-blue-light)] shadow-sm overflow-hidden">
-      <div class="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4">
-        <h2 class="text-[14px] font-medium text-foreground">
+    <Card class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 border-b border-slate-200">
+        <h2 class="text-[16px] font-medium text-[#0C3660]">
           Inventario de Insumos ({{ filteredInsumos.length }})
         </h2>
       </div>
-      <div class="px-4 sm:px-6 pb-5 sm:pb-6">
+      <div class="px-4 sm:px-6 pb-5 sm:pb-6 pt-4">
         <div class="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow class="hover:bg-transparent border-b border-[var(--dental-blue-light)]">
-                <TableHead class="w-[120px] text-foreground font-medium text-sm h-10 px-4">Código</TableHead>
-                <TableHead class="min-w-[220px] text-foreground font-medium text-sm h-10 px-4">Nombre</TableHead>
-                <TableHead class="min-w-[200px] text-foreground font-medium text-sm h-10 px-4">Categoría</TableHead>
-                <TableHead class="w-[110px] text-foreground font-medium text-sm h-10 px-4">Cantidad</TableHead>
-                <TableHead class="w-[100px] text-foreground font-medium text-sm h-10 px-4">Unidad</TableHead>
-                <TableHead class="w-[90px] text-foreground font-medium text-sm h-10 px-4">Mínimo</TableHead>
-                <TableHead class="w-[130px] text-foreground font-medium text-sm h-10 px-4">Estado</TableHead>
-                <TableHead class="w-[120px] text-foreground font-medium text-sm text-right h-10 px-4">Acciones</TableHead>
+              <TableRow class="hover:bg-transparent border-b border-slate-200 bg-slate-50">
+                <TableHead class="w-[120px] text-slate-500 font-medium text-[14px] h-11 px-4">Código</TableHead>
+                <TableHead class="min-w-[220px] text-slate-500 font-medium text-[14px] h-11 px-4">Nombre</TableHead>
+                <TableHead class="min-w-[200px] text-slate-500 font-medium text-[14px] h-11 px-4">Categoría</TableHead>
+                <TableHead class="w-[110px] text-slate-500 font-medium text-[14px] h-11 px-4">Cantidad</TableHead>
+                <TableHead class="w-[100px] text-slate-500 font-medium text-[14px] h-11 px-4">Unidad</TableHead>
+                <TableHead class="w-[90px] text-slate-500 font-medium text-[14px] h-11 px-4">Mínimo</TableHead>
+                <TableHead class="w-[130px] text-slate-500 font-medium text-[14px] h-11 px-4">Estado</TableHead>
+                <TableHead class="w-[120px] text-slate-500 font-medium text-[14px] text-right h-11 px-4 rounded-tr-lg">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="insumo in filteredInsumos" :key="insumo.id" class="border-b border-[var(--dental-blue-light)] last:border-0 hover:bg-[var(--dental-blue-mist)] transition-colors">
-                <TableCell class="font-bold text-foreground py-4 px-4 text-sm">{{ insumo.codigo }}</TableCell>
-                <TableCell class="text-foreground py-4 px-4 text-sm font-normal">{{ insumo.nombre }}</TableCell>
+              <TableRow v-for="insumo in filteredInsumos" :key="insumo.id" class="border-b border-slate-200 last:border-0 hover:bg-slate-50 transition-colors">
+                <TableCell class="font-medium text-[#0C3660] py-4 px-4 text-sm">{{ insumo.codigo }}</TableCell>
+                <TableCell class="text-[#0C3660] py-4 px-4 text-sm font-medium">{{ insumo.nombre }}</TableCell>
                 <TableCell class="px-4">
-                  <Badge variant="outline" class="bg-card text-primary rounded-[6px] px-3 py-1 text-xs border border-primary font-medium shadow-none">
+                  <Badge class="bg-blue-50 text-blue-600 rounded-full px-3 py-1 text-xs border-0 font-medium shadow-none hover:bg-blue-100">
                     {{ insumo.categoria }}
                   </Badge>
                 </TableCell>
                 <TableCell class="px-4">
                   <div class="flex items-center gap-[6px]">
-                    <Package class="w-4 h-4 text-primary mb-[2px]" />
-                    <span class="font-normal text-foreground text-sm">{{ insumo.cantidadActual }}</span>
+                    <Package class="w-4 h-4 text-[#64748B] mb-[2px]" />
+                    <span class="font-normal text-slate-600 text-sm">{{ insumo.cantidadActual }}</span>
                   </div>
                 </TableCell>
-                <TableCell class="px-4 text-sm text-muted-foreground font-normal">{{ insumo.unidadMedida }}</TableCell>
-                <TableCell class="px-4 text-sm text-muted-foreground font-normal">{{ insumo.nivelMinimo }}</TableCell>
+                <TableCell class="px-4 text-sm text-slate-500 font-normal">{{ insumo.unidadMedida }}</TableCell>
+                <TableCell class="px-4 text-sm text-slate-500 font-normal">{{ insumo.nivelMinimo }}</TableCell>
                 <TableCell class="px-4">
                   <!-- Badge condicional -->
-                  <Badge class="rounded-[6px] px-3 py-1 font-medium text-xs shadow-sm border-0 tracking-wide" :class="getEstadoClass(insumo.estadoStock)">
+                  <Badge class="rounded-[6px] px-3 py-1 font-medium text-[13px] shadow-none flex items-center gap-1.5 w-max border-0" :class="getEstadoClass(insumo.estadoStock)">
+                    <CheckCircle2 v-if="insumo.estadoStock === 'Normal'" class="w-3.5 h-3.5" />
+                    <AlertCircle v-else-if="insumo.estadoStock === 'Bajo stock'" class="w-3.5 h-3.5" />
+                    <XCircle v-else-if="insumo.estadoStock === 'Sin stock'" class="w-3.5 h-3.5" />
                     {{ insumo.estadoStock }}
                   </Badge>
                 </TableCell>
@@ -449,7 +452,7 @@ const getEstadoClass = (estado: string) => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      class="h-auto w-auto p-2 text-primary hover:text-foreground hover:bg-input-background rounded-md transition-colors"
+                      class="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
                       @click="handleUpdateStock(insumo)"
                     >
                       <TrendingUp class="w-4 h-4" />
@@ -457,7 +460,7 @@ const getEstadoClass = (estado: string) => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      class="h-auto w-auto p-2 text-primary hover:text-foreground hover:bg-input-background rounded-md transition-colors"
+                      class="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
                       @click="handleEditInsumo(insumo)"
                     >
                       <Edit class="w-4 h-4" />
