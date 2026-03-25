@@ -25,7 +25,7 @@
 
       <!-- Date navigation bar -->
       <div class="bg-white border border-[#b5d4f4] rounded-xl px-6 py-5 mb-6 flex items-center justify-between">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 w-52 shrink-0">
           <button
             class="bg-[#f5f9fc] border border-[#b5d4f4] rounded-md w-[38px] h-8 flex items-center justify-center hover:bg-[#e6f1fb] transition-colors"
             @click="cambiarDia(-1)"
@@ -36,7 +36,7 @@
             </svg>
           </button>
 
-          <div class="bg-[#e6f1fb] rounded-lg h-9 px-4 flex items-center">
+          <div class="bg-[#e6f1fb] rounded-lg h-9 px-4 flex items-center whitespace-nowrap">
             <span class="text-[#0c3660] text-sm font-medium">{{ fechaFormateada }}</span>
           </div>
 
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Dentista filter -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 w-52 shrink-0">
           <span class="text-[#0c3660] text-sm font-medium">Dentista:</span>
           <div class="relative">
             <select
@@ -114,7 +114,7 @@
             @click="abrirEditar(cita)"
           >
             <!-- Left: time + patient -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 w-64 shrink-0">
               <div class="bg-[#e6f1fb] rounded-lg px-3 py-2 text-center min-w-[64px]">
                 <span class="text-[#0c3660] text-sm font-semibold block leading-tight">{{ cita.hora }}</span>
               </div>
@@ -125,8 +125,8 @@
             </div>
 
             <!-- Center: dentist -->
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-full bg-[#378add] flex items-center justify-center">
+            <div class="flex items-center gap-2 w-52 shrink-0">
+              <div class="w-7 h-7 rounded-full bg-[#378add] flex items-center justify-center shrink-0">
                 <span class="text-white text-xs font-medium">{{ iniciales(cita.dentista) }}</span>
               </div>
               <span class="text-[#4a6279] text-sm">{{ cita.dentista }}</span>
@@ -134,7 +134,7 @@
 
             <!-- Right: status badge -->
             <span
-              class="text-xs font-medium px-3 py-1 rounded-full"
+              class="text-xs font-medium px-3 py-1 rounded-full w-28 text-center inline-block"
               :class="estadoClase(cita.estado)"
             >
               {{ cita.estado }}
