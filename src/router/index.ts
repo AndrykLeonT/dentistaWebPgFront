@@ -24,6 +24,11 @@ const router = createRouter({
           name: 'forgot-password',
           component: () => import('../views/auth/ForgotPasswordView.vue'),
         },
+        {
+          path: 'send-mail',
+          name: 'send-mail',
+          component: () => import('../views/auth/SendMailLoginView.vue'),
+        },
       ],
     },
 
@@ -46,6 +51,16 @@ const router = createRouter({
           path: 'pacientes',
           name: 'pacientes',
           component: () => import('../views/pacientes/PacientesView.vue'),
+        },
+        {
+          path: 'pacientes/:id/historial',
+          name: 'ver-historial-paciente',
+          component: () => import('../views/pacientes/VerHistorialPacienteView.vue'),
+        },
+        {
+          path: 'pacientes/:id/editar',
+          name: 'editar-paciente',
+          component: () => import('../views/pacientes/EditarPacienteView.vue'),
         },
         {
           path: 'servicios',

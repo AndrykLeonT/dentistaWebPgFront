@@ -49,13 +49,13 @@
           @click="handleSubmit"
           class="w-full h-9 bg-blue-500 hover:bg-blue-600 rounded-md text-white text-sm font-medium transition cursor-pointer"
         >
-          Enviar instrucciones
+          Enviar enlace de recuperación
         </button>
 
         <!-- Volver al login -->
         <div class="text-center">
           <RouterLink to="/" class="text-sky-700 text-sm font-medium hover:underline">
-            ← Volver al inicio de sesión
+            ← Regresar al inicio de sesión
           </RouterLink>
         </div>
       </div>
@@ -65,21 +65,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const email = ref('')
 const errorMsg = ref('')
 const successMsg = ref('')
 
 function handleSubmit() {
-  errorMsg.value = ''
-  successMsg.value = ''
-
-  if (!email.value) {
-    errorMsg.value = 'Por favor ingresa tu correo.'
-    return
-  }
-
-  // Aquí irá la llamada a tu API en el futuro
-  successMsg.value = 'Si el correo existe, recibirás las instrucciones en breve.'
+  router.push({ path: '/send-mail', query: { email: email.value || 'correo@ejemplo.com' } })
 }
 </script>
