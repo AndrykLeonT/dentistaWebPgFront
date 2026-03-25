@@ -134,13 +134,17 @@
       </div>
     </div>
   </div>
+  <!-- Drawer registrar paciente -->
+  <RegistrarPacienteDrawer v-model="mostrarDrawer" @guardado="onPacienteGuardado" />
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, Plus, Phone, Mail, Eye, Pencil } from 'lucide-vue-next'
+import RegistrarPacienteDrawer from '../../components/pacientes/RegistrarPacienteDrawer.vue'
 
+const mostrarDrawer = ref(false)
 const router = useRouter()
 const busqueda = ref('')
 const filtroEstado = ref('')
@@ -223,7 +227,7 @@ const pacientesFiltrados = computed(() => {
 })
 
 function registrarPaciente() {
-  // router.push('/pacientes/nuevo')  ← futuro
+  mostrarDrawer.value = true
 }
 
 function verPaciente(paciente: Paciente) {
@@ -232,5 +236,10 @@ function verPaciente(paciente: Paciente) {
 
 function editarPaciente(paciente: Paciente) {
   // router.push(`/pacientes/${paciente.id}/editar`)  ← futuro
+}
+
+function onPacienteGuardado(datos: any) {
+  console.log('Paciente guardado:', datos)
+  // Aquí se conectará con la API en el futuro
 }
 </script>
