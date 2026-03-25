@@ -12,7 +12,7 @@
         <!-- Nueva Cita button -->
         <button
           class="flex items-center gap-2 bg-[#378add] hover:bg-[#2d6fb5] text-white text-sm font-medium px-4 h-9 rounded-md transition-colors"
-          @click="modalAbierto = true"
+          @click="modalNuevaAbierto = true"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -26,7 +26,6 @@
       <!-- Date navigation bar -->
       <div class="bg-white border border-[#b5d4f4] rounded-xl px-6 py-5 mb-6 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <!-- Prev -->
           <button
             class="bg-[#f5f9fc] border border-[#b5d4f4] rounded-md w-[38px] h-8 flex items-center justify-center hover:bg-[#e6f1fb] transition-colors"
             @click="cambiarDia(-1)"
@@ -37,12 +36,10 @@
             </svg>
           </button>
 
-          <!-- Current date display -->
           <div class="bg-[#e6f1fb] rounded-lg h-9 px-4 flex items-center">
             <span class="text-[#0c3660] text-sm font-medium">{{ fechaFormateada }}</span>
           </div>
 
-          <!-- Next -->
           <button
             class="bg-[#f5f9fc] border border-[#b5d4f4] rounded-md w-[38px] h-8 flex items-center justify-center hover:bg-[#e6f1fb] transition-colors"
             @click="cambiarDia(1)"
@@ -53,7 +50,6 @@
             </svg>
           </button>
 
-          <!-- Hoy -->
           <button
             class="bg-[#f5f9fc] border border-[#b5d4f4] rounded-md h-8 px-3 text-sm font-medium text-[#0c3660] hover:bg-[#e6f1fb] transition-colors"
             :class="{ 'bg-[#e6f1fb] border-[#378add]': esHoy }"
@@ -114,16 +110,14 @@
           <div
             v-for="cita in citasDelDia"
             :key="cita.id"
-            class="flex items-center justify-between border border-[#b5d4f4] rounded-xl px-5 py-4 hover:bg-[#f5f9fc] transition-colors"
+            class="flex items-center justify-between border border-[#b5d4f4] rounded-xl px-5 py-4 hover:bg-[#f5f9fc] transition-colors cursor-pointer"
+            @click="abrirEditar(cita)"
           >
-            <!-- Left: time + patient info -->
+            <!-- Left: time + patient -->
             <div class="flex items-center gap-4">
-              <!-- Time badge -->
               <div class="bg-[#e6f1fb] rounded-lg px-3 py-2 text-center min-w-[64px]">
                 <span class="text-[#0c3660] text-sm font-semibold block leading-tight">{{ cita.hora }}</span>
               </div>
-
-              <!-- Patient & service info -->
               <div>
                 <p class="text-[#0c3660] text-sm font-semibold">{{ cita.paciente }}</p>
                 <p class="text-[#4a6279] text-xs mt-0.5">{{ cita.servicio }}</p>
@@ -139,25 +133,33 @@
             </div>
 
             <!-- Right: status badge -->
-            <div>
-              <span
-                class="text-xs font-medium px-3 py-1 rounded-full"
-                :class="estadoClase(cita.estado)"
-              >
-                {{ cita.estado }}
-              </span>
-            </div>
+            <span
+              class="text-xs font-medium px-3 py-1 rounded-full"
+              :class="estadoClase(cita.estado)"
+            >
+              {{ cita.estado }}
+            </span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Nueva Cita modal -->
     <NuevaCitaModal
-      v-model="modalAbierto"
+      v-model="modalNuevaAbierto"
       :pacientes="pacientes"
       :dentistas="dentistas"
       :servicios="servicios"
+    />
+
+    <!-- Editar Cita modal -->
+    <EditarCitaModal
+      v-model="modalEditarAbierto"
+      :cita="citaSeleccionada"
+      :pacientes="pacientes"
+      :dentistas="dentistas"
+      :servicios="servicios"
+      @actualizar="onActualizarCita"
     />
   </div>
 </template>
@@ -165,8 +167,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import NuevaCitaModal from './NuevaCitaModal.vue'
+import EditarCitaModal from './EditarCitaModal.vue'
 
-// ─── Date navigation ────────────────────────────────────────────────────────
+// ─── Date navigation ─────────────────────────────────────────────────────────
 
 const today = () => {
   const d = new Date()
@@ -185,10 +188,7 @@ const fechaFormateada = computed(() =>
   })
 )
 
-const esHoy = computed(() => {
-  const t = today()
-  return fechaActual.value.toDateString() === t.toDateString()
-})
+const esHoy = computed(() => fechaActual.value.toDateString() === today().toDateString())
 
 function cambiarDia(delta) {
   const nueva = new Date(fechaActual.value)
@@ -200,12 +200,24 @@ function irAHoy() {
   fechaActual.value = today()
 }
 
-// ─── Dropdown / modal state ──────────────────────────────────────────────────
+// ─── Modal state ─────────────────────────────────────────────────────────────
 
-const modalAbierto = ref(false)
-const dentistFiltro = ref('')
+const modalNuevaAbierto  = ref(false)
+const modalEditarAbierto = ref(false)
+const citaSeleccionada   = ref(null)
+const dentistFiltro      = ref('')
 
-// ─── Catalog data ────────────────────────────────────────────────────────────
+function abrirEditar(cita) {
+  citaSeleccionada.value = cita
+  modalEditarAbierto.value = true
+}
+
+function onActualizarCita(datosActualizados) {
+  // TODO: persist changes via API
+  console.log('Cita actualizada:', datosActualizados)
+}
+
+// ─── Catalog data ─────────────────────────────────────────────────────────────
 
 const pacientes = ref([
   { id: 1, nombre: 'Juan García López' },
@@ -226,8 +238,7 @@ const servicios = ref([
   { id: 4, nombre: 'Blanqueamiento' },
 ])
 
-// ─── Hardcoded example appointments ─────────────────────────────────────────
-// fechaISO is compared against fechaActual; format: "YYYY-MM-DD"
+// ─── Hardcoded example appointments ──────────────────────────────────────────
 
 function isoDeHoy(offsetDias = 0) {
   const d = today()
@@ -238,72 +249,90 @@ function isoDeHoy(offsetDias = 0) {
 const todasLasCitas = ref([
   {
     id: 1,
-    fechaISO: isoDeHoy(0),
-    hora: '09:00',
-    paciente: 'Juan García López',
-    dentista: 'Dr. Carlos Martínez',
-    dentistId: 1,
-    servicio: 'Limpieza dental',
-    estado: 'Confirmada',
+    fechaISO:   isoDeHoy(0),
+    hora:       '09:00',
+    paciente:   'Juan García López',
+    pacienteId: 1,
+    dentista:   'Dr. Carlos Martínez',
+    dentistId:  1,
+    servicio:   'Limpieza dental',
+    servicioId: 1,
+    estado:     'Confirmada',
+    motivo:     'Limpieza semestral',
   },
   {
     id: 2,
-    fechaISO: isoDeHoy(0),
-    hora: '10:30',
-    paciente: 'María Rodríguez Pérez',
-    dentista: 'Dra. Ana López',
-    dentistId: 2,
-    servicio: 'Blanqueamiento',
-    estado: 'Pendiente',
+    fechaISO:   isoDeHoy(0),
+    hora:       '10:30',
+    paciente:   'María Rodríguez Pérez',
+    pacienteId: 2,
+    dentista:   'Dra. Ana López',
+    dentistId:  2,
+    servicio:   'Blanqueamiento',
+    servicioId: 4,
+    estado:     'Pendiente',
+    motivo:     'Blanqueamiento estético',
   },
   {
     id: 3,
-    fechaISO: isoDeHoy(0),
-    hora: '12:00',
-    paciente: 'Luis Hernández Mora',
-    dentista: 'Dr. Carlos Martínez',
-    dentistId: 1,
-    servicio: 'Extracción',
-    estado: 'En curso',
+    fechaISO:   isoDeHoy(0),
+    hora:       '12:00',
+    paciente:   'Luis Hernández Mora',
+    pacienteId: 3,
+    dentista:   'Dr. Carlos Martínez',
+    dentistId:  1,
+    servicio:   'Extracción',
+    servicioId: 2,
+    estado:     'En curso',
+    motivo:     'Caries en molar superior',
   },
   {
     id: 4,
-    fechaISO: isoDeHoy(1),
-    hora: '09:30',
-    paciente: 'Ana Torres Vega',
-    dentista: 'Dra. Ana López',
-    dentistId: 2,
-    servicio: 'Ortodoncia',
-    estado: 'Confirmada',
+    fechaISO:   isoDeHoy(1),
+    hora:       '09:30',
+    paciente:   'Ana Torres Vega',
+    pacienteId: 4,
+    dentista:   'Dra. Ana López',
+    dentistId:  2,
+    servicio:   'Ortodoncia',
+    servicioId: 3,
+    estado:     'Confirmada',
+    motivo:     'Revisión de brackets',
   },
   {
     id: 5,
-    fechaISO: isoDeHoy(1),
-    hora: '11:00',
-    paciente: 'Juan García López',
-    dentista: 'Dr. Carlos Martínez',
-    dentistId: 1,
-    servicio: 'Limpieza dental',
-    estado: 'Pendiente',
+    fechaISO:   isoDeHoy(1),
+    hora:       '11:00',
+    paciente:   'Juan García López',
+    pacienteId: 1,
+    dentista:   'Dr. Carlos Martínez',
+    dentistId:  1,
+    servicio:   'Limpieza dental',
+    servicioId: 1,
+    estado:     'Pendiente',
+    motivo:     '',
   },
   {
     id: 6,
-    fechaISO: isoDeHoy(-1),
-    hora: '08:00',
-    paciente: 'María Rodríguez Pérez',
-    dentista: 'Dr. Carlos Martínez',
-    dentistId: 1,
-    servicio: 'Blanqueamiento',
-    estado: 'Completada',
+    fechaISO:   isoDeHoy(-1),
+    hora:       '08:00',
+    paciente:   'María Rodríguez Pérez',
+    pacienteId: 2,
+    dentista:   'Dr. Carlos Martínez',
+    dentistId:  1,
+    servicio:   'Blanqueamiento',
+    servicioId: 4,
+    estado:     'Completada',
+    motivo:     'Control post-blanqueamiento',
   },
 ])
 
-// ─── Filtered list for the selected day ─────────────────────────────────────
+// ─── Filtered appointments for selected day ───────────────────────────────────
 
 const citasDelDia = computed(() => {
   const iso = fechaActual.value.toISOString().slice(0, 10)
   return todasLasCitas.value.filter((c) => {
-    const coincideFecha = c.fechaISO === iso
+    const coincideFecha    = c.fechaISO === iso
     const coincideDentista = dentistFiltro.value === '' || c.dentistId === dentistFiltro.value
     return coincideFecha && coincideDentista
   })
@@ -323,11 +352,11 @@ function iniciales(nombre) {
 
 function estadoClase(estado) {
   const map = {
-    Confirmada: 'bg-[#e6f4ea] text-[#1e7e34]',
-    Pendiente:  'bg-[#fff8e1] text-[#b07800]',
-    'En curso': 'bg-[#e8f0fe] text-[#1a56db]',
-    Completada: 'bg-[#f0f0f0] text-[#555]',
-    Cancelada:  'bg-[#fdecea] text-[#c0392b]',
+    Confirmada:  'bg-[#e6f4ea] text-[#1e7e34]',
+    Pendiente:   'bg-[#fff8e1] text-[#b07800]',
+    'En curso':  'bg-[#e8f0fe] text-[#1a56db]',
+    Completada:  'bg-[#f0f0f0] text-[#555]',
+    Cancelada:   'bg-[#fdecea] text-[#c0392b]',
   }
   return map[estado] ?? 'bg-[#f0f0f0] text-[#555]'
 }
