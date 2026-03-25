@@ -107,7 +107,9 @@
 
     <div v-if="modalNuevoAbierto" class="fixed inset-0 z-50 flex items-center justify-center">
       <div class="absolute inset-0 bg-black/40" @click="cerrarModalNuevo"></div>
+      
       <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-7">
+        
         <div class="flex items-start justify-between mb-1">
           <div>
             <h2 class="text-lg font-bold text-slate-800">Registrar Nuevo Servicio</h2>
@@ -180,7 +182,9 @@
 
     <div v-if="modalEditarAbierto && servicioEditando" class="fixed inset-0 z-50 flex items-center justify-center">
       <div class="absolute inset-0 bg-black/40" @click="cerrarModalEditar"></div>
+      
       <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-7">
+        
         <div class="flex items-start justify-between mb-1">
           <div>
             <h2 class="text-lg font-bold text-slate-800">Editar Servicio</h2>
@@ -265,8 +269,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 
-
-
 // ── Tipos
 interface Servicio {
   nombre: string
@@ -281,15 +283,15 @@ interface Servicio {
   activo: boolean
 }
 
-//Catálogo de categorías 
+// Catálogo de categorías 
 const categorias = ['Preventivo', 'Restaurativo', 'Estético', 'Cirugía', 'Ortodoncia']
 
-//Filtros
+// Filtros
 const searchQuery = ref('')
 const categoriaFiltro = ref('')
 const estadoFiltro = ref('')
 
-//Datos
+// Datos
 const servicios = ref<Servicio[]>([
   { nombre: 'Limpieza Dental', categoria: 'Preventivo', descripcion: '', duracion: 60, precio: 800, multipleSesiones: false, numSesiones: 1, notas: '', estado: 'Activo', activo: true },
   { nombre: 'Resina Dental', categoria: 'Restaurativo', descripcion: '', duracion: 45, precio: 1200, multipleSesiones: false, numSesiones: 1, notas: '', estado: 'Activo', activo: true },
@@ -318,7 +320,7 @@ const categoriaClase = (cat: string) => {
   return 'border-blue-400 text-blue-500 bg-white'
 }
 
-//Modal Nuevo
+// Modal Nuevo
 const modalNuevoAbierto = ref(false)
 
 const nuevoServicio = reactive<Omit<Servicio, 'estado' | 'activo'>>({
@@ -339,7 +341,7 @@ function guardarServicio() {
   cerrarModalNuevo()
 }
 
-//Modal Editar
+// Modal Editar
 const modalEditarAbierto = ref(false)
 const servicioEditando = ref<Servicio | null>(null)
 
