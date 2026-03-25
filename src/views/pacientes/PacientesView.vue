@@ -231,7 +231,7 @@ function registrarPaciente() {
 }
 
 function verPaciente(paciente: Paciente) {
-  // router.push(`/pacientes/${paciente.id}`)  ← futuro
+  router.push(`/pacientes/${paciente.id}/historial`)
 }
 
 function editarPaciente(paciente: Paciente) {
