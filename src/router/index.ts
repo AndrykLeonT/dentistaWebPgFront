@@ -24,6 +24,11 @@ const router = createRouter({
           name: 'forgot-password',
           component: () => import('../views/auth/ForgotPasswordView.vue'),
         },
+        {
+          path: 'send-mail',
+          name: 'send-mail',
+          component: () => import('../views/auth/SendMailLoginView.vue'),
+        },
       ],
     },
 
