@@ -1,7 +1,6 @@
 <template>
   <div class="p-8 min-h-screen bg-slate-50">
 
-    <!-- Header -->
     <div class="flex items-start justify-between mb-6">
       <div>
         <h1 class="text-3xl font-bold text-slate-800">Configuración de Usuarios</h1>
@@ -113,12 +112,10 @@
 
     <!--REGISTRAR NUEVO USUARIO-->
     <div v-if="modalNuevoAbierto" class="fixed inset-0 z-50 flex items-center justify-center">
-      <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/40" @click="cerrarModalNuevo"></div>
 
       <!-- Panel -->
       <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-7">
-        <!-- Header modal -->
         <div class="flex items-start justify-between mb-1">
           <div>
             <h2 class="text-lg font-bold text-slate-800">Registrar Nuevo Usuario</h2>
