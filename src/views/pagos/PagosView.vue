@@ -241,10 +241,12 @@ const getMetodoClass = (metodo: string) => {
 
       <!-- Table Section -->
       <div>
-        <h3 class="text-[16px] font-medium text-[#0C3660] mb-3">
-          Historial de Pagos ({{ filteredPagos.length }})
-        </h3>
         <Card class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 border-b border-slate-200">
+            <h2 class="text-[16px] font-medium text-[#0C3660]">
+              Historial de Pagos ({{ filteredPagos.length }})
+            </h2>
+          </div>
           <div class="overflow-x-auto">
             <Table>
               <TableHeader>
