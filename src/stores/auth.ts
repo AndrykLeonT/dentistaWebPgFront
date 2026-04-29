@@ -56,17 +56,17 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(usuario: string, contraseña: string): Promise<void> {
-    const { data } = await api.post<{ data: LoginResponse }>('/login', {
+    const { data } = await api.post<LoginResponse>('/login', {
       usuario,
       contraseña,
     })
 
-    token.value    = data.data.token
-    empleado.value = data.data.empleado
-    localStorage.setItem(TOKEN_KEY,    data.data.token)
-    localStorage.setItem(EMPLEADO_KEY, JSON.stringify(data.data.empleado))
+    token.value    = data.token
+    empleado.value = data.empleado
+    localStorage.setItem(TOKEN_KEY,    data.token)
+    localStorage.setItem(EMPLEADO_KEY, JSON.stringify(data.empleado))
 
-    if (data.data.requiresPasswordChange) {
+    if (data.requiresPasswordChange) {
       requiresPasswordChange.value = true
       localStorage.setItem(REQUIRES_PW_KEY, 'true')
       router.push('/change-password')

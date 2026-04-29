@@ -2,7 +2,7 @@ import api from '@/services/api'
 import type { Empleado, ApiSingleResponse, LoginResponse } from '@/types'
 
 export async function login(usuario: string, contraseña: string) {
-  const res = await api.post<{ data: LoginResponse }>('/login', { usuario, contraseña })
+  const res = await api.post<LoginResponse>('/login', { usuario, contraseña })
   return res.data
 }
 
