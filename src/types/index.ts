@@ -1,16 +1,45 @@
 // ─── Clasificaciones ──────────────────────────────────────────────────────────
 
-export type TipoEmpleado = 'Administrador' | 'Dentista' | 'Recepcionista'
-
-export type ClaseServicio = 'Preventivo' | 'Restaurativo' | 'Estético' | 'Cirugía' | 'Ortodoncia'
-
 export type EstadoCita = 'Confirmada' | 'Pendiente' | 'En curso' | 'Completada' | 'Cancelada'
 
 export type MetodoPago = 'Efectivo' | 'Tarjeta de crédito' | 'Transferencia'
 
 export type TipoSangre = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 
-// ─── Sub-objetos reutilizables ────────────────────────────────────────────────
+// ─── Empleado (estructura real de la API) ─────────────────────────────────────
+
+/** Objeto tipoEmpleado anidado en la respuesta de /login y /me. */
+export interface TipoEmpleado {
+  id: number
+  nombre: 'Administrador' | 'Dentista' | 'Recepcionista'
+}
+
+/** Datos personales anidados dentro del Empleado. */
+export interface EmpleadoPersona {
+  id: number
+  nombreCompleto: string
+  celular?: string
+  correoElectronico?: string
+}
+
+/** Empleado tal como lo devuelve el backend (/login y /me). */
+export interface Empleado {
+  id: number
+  usuario: string
+  rfc?: string
+  tipoEmpleado: TipoEmpleado
+  persona: EmpleadoPersona
+  requiresPasswordChange?: boolean
+}
+
+/** Respuesta completa del endpoint POST /login. */
+export interface LoginResponse {
+  token: string
+  empleado: Empleado
+  requiresPasswordChange?: boolean
+}
+
+// ─── Paciente ─────────────────────────────────────────────────────────────────
 
 export interface Direccion {
   calle: string
@@ -25,12 +54,10 @@ export interface ContactoEmergencia {
   telefono: string
 }
 
-// ─── Entidades principales ────────────────────────────────────────────────────
-
-/** Paciente del consultorio. */
+/** Persona = Paciente en el dominio del sistema. */
 export interface Persona {
   id: number
-  expediente: string
+  expediente?: string
   nombre: string
   apellidos: string
   fechaNacimiento: string // YYYY-MM-DD
@@ -44,98 +71,82 @@ export interface Persona {
   condicionesMedicas?: string
   medicamentos?: string
   contactoEmergencia?: ContactoEmergencia
-  estado: 'Activo' | 'Inactivo'
+  estado?: 'Activo' | 'Inactivo'
   ultimaVisita?: string // YYYY-MM-DD
 }
 
-/** Usuario interno del sistema (dentista, recepcionista, admin). */
-export interface Empleado {
+// ─── Servicios ────────────────────────────────────────────────────────────────
+
+/** Categoría de servicio dental (GET /api/clases-servicio). */
+export interface ClaseServicio {
   id: number
   nombre: string
-  apellidos: string
-  correo: string
-  telefono?: string
-  tipo: TipoEmpleado
-  estado: 'Activo' | 'Inactivo'
-  fotoPerfil?: string
-  fechaRegistro?: string // YYYY-MM-DD
-  ultimoAcceso?: string  // ISO datetime
 }
 
 export interface Servicio {
   id: number
   nombre: string
-  clase: ClaseServicio
+  claseServicio?: ClaseServicio
   descripcion?: string
-  duracion: number       // minutos
-  precio: number         // MXN
+  duracion: number        // minutos
+  precio: number          // MXN
   multipleSesiones: boolean
   numSesiones: number
   notas?: string
   activo: boolean
 }
 
+// ─── Citas ────────────────────────────────────────────────────────────────────
+
 export interface Cita {
   id: number
-  fecha: string          // YYYY-MM-DD
-  horaInicio: string     // HH:mm
-  horaFin?: string       // HH:mm
-  pacienteId: number
-  paciente?: Pick<Persona, 'id' | 'nombre' | 'apellidos'>
-  empleadoId: number
-  empleado?: Pick<Empleado, 'id' | 'nombre' | 'apellidos' | 'tipo'>
-  servicioId: number
-  servicio?: Pick<Servicio, 'id' | 'nombre'>
+  fecha: string           // YYYY-MM-DD
+  horaInicio: string      // HH:mm
+  horaFin?: string        // HH:mm
+  persona?: Persona
+  empleado?: Empleado
+  servicio?: Servicio
   estado: EstadoCita
   motivo?: string
   notasClinicas?: string
 }
 
-/** Receta emitida al finalizar una cita. */
+// ─── Recetas ──────────────────────────────────────────────────────────────────
+
 export interface Receta {
   id: number
-  citaId: number
-  pacienteId: number
-  empleadoId: number
-  fecha: string          // YYYY-MM-DD
-  medicamentos: string
+  cita?: Cita
+  persona?: Persona
+  empleado?: Empleado
   indicaciones: string
-  notas?: string
+  fecha?: string          // YYYY-MM-DD
 }
+
+// ─── Pagos ────────────────────────────────────────────────────────────────────
 
 export interface Pago {
   id: number
-  folio: string
-  fecha: string          // YYYY-MM-DD
-  pacienteId: number
-  paciente?: Pick<Persona, 'id' | 'nombre' | 'apellidos'>
-  citaId?: number
-  servicioId: number
-  servicio?: Pick<Servicio, 'id' | 'nombre'>
-  empleadoId?: number
-  empleado?: Pick<Empleado, 'id' | 'nombre' | 'apellidos'>
-  precio: number         // antes de descuento
-  descuento: number
-  total: number          // precio - descuento
-  metodo: MetodoPago
-  referencia?: string
-  factura: boolean
-  notas?: string
+  folio?: string
+  fecha?: string          // YYYY-MM-DD
+  persona?: Persona
+  servicio?: Servicio
+  total: number
+  efectivo: number
+  tarjeta: number
+  // idEmpleado e idCorte los asigna el backend automáticamente
 }
 
-/** Cierre de caja diario o por período. */
+// ─── Cortes de caja ───────────────────────────────────────────────────────────
+
 export interface Corte {
   id: number
-  fecha: string          // YYYY-MM-DD
-  empleadoId: number
-  empleado?: Pick<Empleado, 'id' | 'nombre' | 'apellidos'>
-  totalEfectivo: number
-  totalTarjeta: number
-  totalTransferencia: number
-  totalGeneral: number
-  numPagos: number
-  notas?: string
-  creadoEn: string       // ISO datetime
+  fDeCaja: string         // fecha de apertura (YYYY-MM-DD HH:mm:ss)
+  fechaFin?: string       // fecha de cierre  (YYYY-MM-DD HH:mm:ss)
+  totalEfectivo?: number
+  totalTarjeta?: number
+  totalGeneral?: number
+  numPagos?: number
+  activo: boolean
 }
 
 // ─── Wrappers de respuesta API ────────────────────────────────────────────────
@@ -152,4 +163,5 @@ export interface ApiListResponse<T> {
 
 export interface ApiSingleResponse<T> {
   data: T
+  message?: string
 }
