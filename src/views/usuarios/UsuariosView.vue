@@ -408,7 +408,7 @@ function cerrarModalNuevo() {
 
 function guardarNuevoUsuario() {
   if (!nuevoUsuario.nombre || !nuevoUsuario.apellidos || !nuevoUsuario.correo) return
-  const iniciales = (nuevoUsuario.nombre[0] + nuevoUsuario.apellidos[0]).toUpperCase()
+  const iniciales = `${nuevoUsuario.nombre.charAt(0)}${nuevoUsuario.apellidos.charAt(0)}`.toUpperCase()
   usuarios.value.push({
     nombre: `${nuevoUsuario.nombre} ${nuevoUsuario.apellidos}`,
     iniciales,
@@ -448,8 +448,12 @@ function actualizarUsuario() {
   const idx = usuarios.value.findIndex((u) => u.correo === usuarioEditando.value!.correo)
   if (idx !== -1) {
     const u = usuarioEditando.value
+    const usuarioActual = usuarios.value[idx]
+
+    if (!usuarioActual) return
+
     usuarios.value[idx] = {
-      ...usuarios.value[idx],
+      ...usuarioActual,
       nombre: `${u.editNombre} ${u.editApellidos}`,
       correo: u.correo,
       telefono: u.telefono,
