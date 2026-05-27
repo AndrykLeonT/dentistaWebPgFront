@@ -212,6 +212,8 @@ export interface Receta {
   empleado?: Empleado
   indicaciones: string
   fecha?: string          // YYYY-MM-DD
+  fechaRegistro?: string
+  createdAt?: string
 }
 
 // ─── Pagos ────────────────────────────────────────────────────────────────────
