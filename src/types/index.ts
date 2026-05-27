@@ -132,10 +132,25 @@ export interface Servicio {
   duracion?: string       // HH:mm:ss
   costo?: string
   precio?: number         // MXN
-  multipleSesiones?: boolean
-  numSesiones?: number
-  notas?: string
+  estado?: boolean
   activo?: boolean
+}
+
+export interface StoreServicioPayload {
+  idClaseServicio: number
+  nombre: string
+  descripcion?: string | null
+  costo: number
+  duracion: string
+}
+
+export interface UpdateServicioPayload {
+  idClaseServicio?: number
+  nombre?: string
+  descripcion?: string | null
+  costo?: number
+  duracion?: string
+  estado?: boolean
 }
 
 // ─── Citas ────────────────────────────────────────────────────────────────────

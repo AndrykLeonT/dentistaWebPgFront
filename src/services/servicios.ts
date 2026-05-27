@@ -1,7 +1,12 @@
 import api from '@/services/api'
-import type { Servicio, ClaseServicio, ApiListResponse, ApiSingleResponse } from '@/types'
-
-// ── Servicios ─────────────────────────────────────────────────────────────────
+import type {
+  ApiListResponse,
+  ApiSingleResponse,
+  ClaseServicio,
+  Servicio,
+  StoreServicioPayload,
+  UpdateServicioPayload,
+} from '@/types'
 
 export async function getAll() {
   const res = await api.get<ApiListResponse<Servicio>>('/servicios')
@@ -13,22 +18,19 @@ export async function getById(id: number) {
   return res.data
 }
 
-export async function create(data: Partial<Servicio>) {
+export async function create(data: StoreServicioPayload) {
   const res = await api.post<ApiSingleResponse<Servicio>>('/servicios', data)
   return res.data
 }
 
-export async function update(id: number, data: Partial<Servicio>) {
+export async function update(id: number, data: UpdateServicioPayload) {
   const res = await api.put<ApiSingleResponse<Servicio>>(`/servicios/${id}`, data)
   return res.data
 }
 
 export async function remove(id: number) {
-  const res = await api.delete<ApiSingleResponse<Servicio>>(`/servicios/${id}`)
-  return res.data
+  await api.delete(`/servicios/${id}`)
 }
-
-// ── Clases de servicio ────────────────────────────────────────────────────────
 
 export async function getClases() {
   const res = await api.get<ApiListResponse<ClaseServicio>>('/clases-servicio')
