@@ -28,15 +28,17 @@
       </div>
 
       <!-- Formulario -->
-      <div class="flex flex-col gap-5">
-        <!-- Email -->
+      <form class="flex flex-col gap-5" @submit.prevent="handleLogin">
+        <!-- Usuario -->
         <div class="flex flex-col gap-2">
-          <label class="text-blue-950 text-sm font-medium">Correo electrónico</label>
+          <label class="text-blue-950 text-sm font-medium">Usuario</label>
           <input
-            v-model="email"
-            type="email"
-            placeholder="correo@ejemplo.com"
-            class="h-9 px-3 py-1 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
+            v-model="usuario"
+            type="text"
+            placeholder="Tu nombre de usuario"
+            autocomplete="username"
+            :disabled="loading"
+            class="h-9 px-3 py-1 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition disabled:opacity-50"
           />
         </div>
 
@@ -44,22 +46,27 @@
         <div class="flex flex-col gap-2">
           <label class="text-blue-950 text-sm font-medium">Contraseña</label>
           <input
-            v-model="password"
+            v-model="contraseña"
             type="password"
             placeholder="••••••••"
-            class="h-9 px-3 py-1 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
+            autocomplete="current-password"
+            :disabled="loading"
+            class="h-9 px-3 py-1 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition disabled:opacity-50"
           />
         </div>
 
-        <!-- Mensaje de error -->
-        <p v-if="errorMsg" class="text-red-500 text-xs text-center">{{ errorMsg }}</p>
+        <!-- Error de credenciales -->
+        <p v-if="credentialError" class="text-red-500 text-xs text-center -mt-2">
+          {{ credentialError }}
+        </p>
 
         <!-- Botón -->
         <button
-          @click="handleLogin"
-          class="w-full h-9 bg-blue-500 hover:bg-blue-600 rounded-md text-white text-sm font-medium transition"
+          type="submit"
+          :disabled="loading"
+          class="w-full h-9 bg-blue-500 hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed rounded-md text-white text-sm font-medium transition"
         >
-          Iniciar sesión
+          {{ loading ? 'Iniciando sesión…' : 'Iniciar sesión' }}
         </button>
 
         <!-- ¿Olvidaste tu contraseña? -->
@@ -71,28 +78,43 @@
             ¿Olvidaste tu contraseña?
           </RouterLink>
         </div>
-
-        <!-- Datos de prueba -->
-        <div class="border-t border-blue-200 pt-4 flex flex-col gap-1 text-center">
-          <p class="text-slate-600 text-xs font-bold">Datos de prueba:</p>
-          <p class="text-slate-600 text-xs">Email: admin@dentalsys.com</p>
-          <p class="text-slate-600 text-xs">Contraseña: cualquier texto de 6+ caracteres</p>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
-const router = useRouter()
-const email = ref('')
-const password = ref('')
-const errorMsg = ref('')
+const auth           = useAuthStore()
+const usuario        = ref('')
+const contraseña     = ref('')
+const loading        = ref(false)
+const credentialError = ref('')
 
-function handleLogin() {
-  router.push('/dashboard')
+async function handleLogin() {
+  if (loading.value) return
+  credentialError.value = ''
+  loading.value = true
+
+  try {
+    await auth.login(usuario.value, contraseña.value)
+    // La redirección la hace auth.login() internamente
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      const msg = err.response?.data?.message
+      if (err.response?.status === 401) {
+        credentialError.value = msg ?? 'Usuario o contraseña incorrectos'
+      } else {
+        credentialError.value = msg ?? 'Error al conectar con el servidor'
+      }
+    } else {
+      credentialError.value = 'Error inesperado, intenta de nuevo'
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>

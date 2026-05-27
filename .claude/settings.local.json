@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(node -e \"const s=require\\('./node_modules/vue-sonner/package.json'\\); console.log\\(s.main, s.module, s.exports\\)\")",
+      "Bash(node -e \"const t=require\\('./node_modules/vue-sonner/lib/index.js'\\); console.log\\(Object.keys\\(t\\)\\)\")",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)"
     ]
   }
 }

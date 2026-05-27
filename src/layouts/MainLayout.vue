@@ -29,7 +29,7 @@
       <!-- Nav Links -->
       <nav class="flex-1 px-3 pt-4 flex flex-col gap-1">
         <RouterLink
-          v-for="item in navItems"
+          v-for="item in navVisibles"
           :key="item.path"
           :to="item.path"
           class="h-11 pl-3 rounded-lg flex items-center gap-3 transition-colors"
@@ -44,15 +44,17 @@
       <div class="px-4 pt-4 pb-5 border-t border-sky-700 flex flex-col gap-3">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center shrink-0">
-            <span class="text-white text-base">CM</span>
+            <span class="text-white text-base">{{ iniciales }}</span>
           </div>
           <div class="overflow-hidden">
-            <p class="text-white text-sm font-medium truncate">Carlos Martínez González</p>
-            <p class="text-blue-300 text-xs">Administrador</p>
+            <p class="text-white text-sm font-medium truncate">
+              {{ auth.empleado?.persona.nombreCompleto ?? 'Usuario' }}
+            </p>
+            <p class="text-blue-300 text-xs">{{ auth.empleado?.tipoEmpleado.nombre ?? '' }}</p>
           </div>
         </div>
         <button
-          @click="handleLogout"
+          @click="auth.logout()"
           class="w-full h-8 bg-slate-50/10 hover:bg-slate-50/20 rounded-md border border-white/20 text-white text-sm font-medium transition"
         >
           Cerrar sesión
@@ -68,7 +70,9 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import {
   LayoutDashboard,
   CalendarDays,
@@ -77,26 +81,39 @@ import {
   Package,
   CreditCard,
   UserCog,
+  Pill,
+  Wallet,
 } from 'lucide-vue-next'
 
-const router = useRouter()
+const auth  = useAuthStore()
 const route = useRoute()
 
 const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/agenda', label: 'Agenda', icon: CalendarDays },
-  { path: '/pacientes', label: 'Pacientes', icon: Users },
-  { path: '/servicios', label: 'Servicios', icon: Stethoscope },
-  { path: '/inventario', label: 'Inventario', icon: Package },
-  { path: '/pagos', label: 'Pagos', icon: CreditCard },
-  { path: '/usuarios', label: 'Usuarios', icon: UserCog },
+  { path: '/dashboard',  label: 'Dashboard',       icon: LayoutDashboard, visible: () => true },
+  { path: '/pacientes',  label: 'Pacientes',        icon: Users,           visible: () => true },
+  { path: '/citas',      label: 'Citas',            icon: CalendarDays,    visible: () => true },
+  { path: '/recetas',    label: 'Recetas',          icon: Pill,            visible: () => auth.isAdmin || auth.isDentista },
+  { path: '/servicios',  label: 'Servicios',        icon: Stethoscope,     visible: () => true },
+  { path: '/empleados',  label: 'Empleados',        icon: UserCog,         visible: () => true },
+  { path: '/pagos',      label: 'Pagos',            icon: CreditCard,      visible: () => auth.isAdmin || auth.isRecepcionista },
+  { path: '/cortes',     label: 'Cortes de Caja',   icon: Wallet,          visible: () => auth.isAdmin || auth.isRecepcionista },
+  { path: '/inventario', label: 'Inventario',       icon: Package,         visible: () => auth.isAdmin },
 ]
+
+const navVisibles = computed(() => navItems.filter((item) => item.visible()))
+
+const iniciales = computed(() => {
+  const nombre = auth.empleado?.persona.nombreCompleto ?? ''
+  return nombre
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+})
 
 function isActive(path: string) {
   return route.path.startsWith(path)
-}
-
-function handleLogout() {
-  router.push('/login')
 }
 </script>
