@@ -28,10 +28,6 @@ api.interceptors.response.use(
       router.push('/login')
     }
 
-    if (status === 403) {
-      router.push('/forbidden')
-    }
-
     return Promise.reject(error)
   },
 )

@@ -1,17 +1,14 @@
 <template>
-  <!-- Backdrop -->
   <Teleport to="body">
     <div
       v-if="modelValue"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       @click.self="$emit('update:modelValue', false)"
     >
-      <!-- Modal panel -->
       <div
         class="relative bg-[#f5f9fc] border border-[#b5d4f4] rounded-lg shadow-xl w-lg overflow-hidden"
         @click.stop
       >
-        <!-- Header -->
         <div class="px-6 pt-6 pb-2">
           <h2 class="text-[#0c3660] text-lg font-semibold leading-tight">Registrar Nueva Cita</h2>
           <p class="text-[#4a6279] text-sm mt-2">
@@ -19,7 +16,6 @@
           </p>
         </div>
 
-        <!-- Close button -->
         <button
           class="absolute top-4 right-4 text-[#0c3660] opacity-70 hover:opacity-100 transition-opacity"
           @click="$emit('update:modelValue', false)"
@@ -40,9 +36,14 @@
           </svg>
         </button>
 
-        <!-- Form body -->
         <div class="px-6 pt-4 flex flex-col gap-4">
-          <!-- Paciente -->
+          <p
+            v-if="error"
+            class="rounded-md border border-[#f3b2b2] bg-[#fdecea] px-3 py-2 text-sm text-[#9f1f1f]"
+          >
+            {{ error }}
+          </p>
+
           <div class="flex flex-col gap-2">
             <label class="text-[#0c3660] text-sm font-medium">Paciente *</label>
             <div class="relative">
@@ -59,7 +60,6 @@
             </div>
           </div>
 
-          <!-- Dentista -->
           <div class="flex flex-col gap-2">
             <label class="text-[#0c3660] text-sm font-medium">Dentista *</label>
             <div class="relative">
@@ -76,7 +76,6 @@
             </div>
           </div>
 
-          <!-- Servicio -->
           <div class="flex flex-col gap-2">
             <label class="text-[#0c3660] text-sm font-medium">Servicio *</label>
             <div class="relative">
@@ -93,9 +92,7 @@
             </div>
           </div>
 
-          <!-- Fecha + Hora -->
           <div class="grid grid-cols-2 gap-4">
-            <!-- Fecha -->
             <div class="flex flex-col gap-2">
               <label class="text-[#0c3660] text-sm font-medium">Fecha *</label>
               <input
@@ -105,18 +102,23 @@
               />
             </div>
 
-            <!-- Hora de inicio -->
             <div class="flex flex-col gap-2">
               <label class="text-[#0c3660] text-sm font-medium">Hora de inicio *</label>
-              <input
-                v-model="form.horaInicio"
-                type="time"
-                class="bg-white border border-transparent rounded-md h-9 px-3 text-sm text-[#0c3660] font-medium w-full focus:outline-none focus:ring-2 focus:ring-[#378add] cursor-pointer"
-              />
+              <div class="relative">
+                <select
+                  v-model="form.horaInicio"
+                  class="appearance-none bg-white border border-transparent rounded-md h-9 pl-3 pr-8 text-sm text-[#0c3660] font-medium w-full focus:outline-none focus:ring-2 focus:ring-[#378add] cursor-pointer"
+                >
+                  <option value="" disabled>Selecciona una hora</option>
+                  <option v-for="hora in horarios" :key="hora" :value="hora">{{ hora }}</option>
+                </select>
+                <ChevronIcon
+                  class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a6279]"
+                />
+              </div>
             </div>
           </div>
 
-          <!-- Motivo de consulta -->
           <div class="flex flex-col gap-2">
             <label class="text-[#0c3660] text-sm font-medium">Motivo de consulta</label>
             <textarea
@@ -128,19 +130,20 @@
           </div>
         </div>
 
-        <!-- Footer actions -->
         <div class="px-6 py-4 flex justify-end gap-2 mt-2">
           <button
             class="h-9 px-4 bg-[#f5f9fc] border border-[#b5d4f4] text-[#0c3660] text-sm font-medium rounded-md hover:bg-[#e6f1fb] transition-colors"
+            :disabled="saving"
             @click="$emit('update:modelValue', false)"
           >
             Cancelar
           </button>
           <button
-            class="h-9 px-4 bg-[#378add] text-white text-sm font-medium rounded-md hover:bg-[#2d6fb5] transition-colors"
+            class="h-9 px-4 bg-[#378add] text-white text-sm font-medium rounded-md hover:bg-[#2d6fb5] transition-colors disabled:opacity-60"
+            :disabled="saving"
             @click="handleGuardar"
           >
-            Guardar Cita
+            {{ saving ? 'Guardando...' : 'Guardar Cita' }}
           </button>
         </div>
       </div>
@@ -148,10 +151,23 @@
   </Teleport>
 </template>
 
-<script setup>
-import { reactive } from 'vue'
+<script setup lang="ts">
+import { reactive, watch } from 'vue'
 
-// Inline chevron icon to avoid external dependency
+interface SelectOption {
+  id: number
+  nombre: string
+}
+
+interface CitaForm {
+  paciente: number | ''
+  dentista: number | ''
+  servicio: number | ''
+  fecha: string
+  horaInicio: string
+  motivo: string
+}
+
 const ChevronIcon = {
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -161,38 +177,64 @@ const ChevronIcon = {
   `,
 }
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true,
-  },
-  pacientes: {
-    type: Array,
-    default: () => [],
-  },
-  dentistas: {
-    type: Array,
-    default: () => [],
-  },
-  servicios: {
-    type: Array,
-    default: () => [],
-  },
-})
+const horarios = crearHorarios()
 
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{
+  modelValue: boolean
+  pacientes?: SelectOption[]
+  dentistas?: SelectOption[]
+  servicios?: SelectOption[]
+  fechaInicial: string
+  saving?: boolean
+  error?: string | null
+}>()
 
-const form = reactive({
+const emit = defineEmits<{
+  'update:modelValue': [value: boolean]
+  guardar: [value: CitaForm]
+}>()
+
+const form = reactive<CitaForm>({
   paciente: '',
   dentista: '',
   servicio: '',
-  fecha: '',
+  fecha: props.fechaInicial,
   horaInicio: '',
   motivo: '',
 })
 
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (!open) return
+    form.paciente = ''
+    form.dentista = ''
+    form.servicio = ''
+    form.fecha = props.fechaInicial
+    form.horaInicio = ''
+    form.motivo = ''
+  },
+)
+
+watch(
+  () => props.fechaInicial,
+  (fecha) => {
+    if (props.modelValue) form.fecha = fecha
+  },
+)
+
 function handleGuardar() {
-  // TODO: implement save logic
-  console.log('Guardar cita:', { ...form })
+  emit('guardar', { ...form })
+}
+
+function crearHorarios() {
+  const opciones: string[] = []
+
+  for (let hora = 8; hora <= 20; hora += 1) {
+    opciones.push(`${String(hora).padStart(2, '0')}:00`)
+    if (hora < 20) opciones.push(`${String(hora).padStart(2, '0')}:30`)
+  }
+
+  return opciones
 }
 </script>
