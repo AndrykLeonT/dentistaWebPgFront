@@ -11,15 +11,20 @@ export type TipoSangre = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 /** Objeto tipoEmpleado anidado en la respuesta de /login y /me. */
 export interface TipoEmpleado {
   id: number
-  nombre: 'Administrador' | 'Dentista' | 'Recepcionista'
+  nombre: string
+  descripcion?: string
 }
 
 /** Datos personales anidados dentro del Empleado. */
 export interface EmpleadoPersona {
   id: number
   nombreCompleto: string
+  nombre?: string
+  apellidoP?: string
+  apellidoM?: string | null
   celular?: string
   correoElectronico?: string
+  fechaRegistro?: string
 }
 
 /** Empleado tal como lo devuelve el backend (/login y /me). */
@@ -29,7 +34,43 @@ export interface Empleado {
   rfc?: string
   tipoEmpleado: TipoEmpleado
   persona: EmpleadoPersona
+  estado?: boolean
+  cambioContraseña?: boolean
+  fechaRegistro?: string
+  ultimoAcceso?: string | null
   requiresPasswordChange?: boolean
+}
+
+export interface StoreEmpleadoPayload {
+  nombre: string
+  apellidoP: string
+  apellidoM?: string | null
+  celular: string
+  correoElectronico?: string | null
+  idTipoEmpleado: number
+  usuario: string
+  rfc?: string | null
+  contraseña: string
+  palabraClave: string
+}
+
+export interface UpdateEmpleadoPayload {
+  nombre?: string
+  apellidoP?: string
+  apellidoM?: string | null
+  celular?: string
+  correoElectronico?: string | null
+  idTipoEmpleado?: number
+  usuario?: string
+  rfc?: string | null
+  contraseña?: string
+  palabraClave?: string
+  cambioContraseña?: boolean
+}
+
+export interface ResetPasswordPayload {
+  nuevaContraseña: string
+  nuevaContraseña_confirmation: string
 }
 
 /** Respuesta completa del endpoint POST /login. */
@@ -153,7 +194,7 @@ export interface Corte {
 
 export interface ApiListResponse<T> {
   data: T[]
-  meta: {
+  meta?: {
     total: number
     per_page: number
     current_page: number

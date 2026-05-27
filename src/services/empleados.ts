@@ -1,5 +1,13 @@
 import api from '@/services/api'
-import type { Empleado, ApiListResponse, ApiSingleResponse } from '@/types'
+import type {
+  ApiListResponse,
+  ApiSingleResponse,
+  Empleado,
+  ResetPasswordPayload,
+  StoreEmpleadoPayload,
+  TipoEmpleado,
+  UpdateEmpleadoPayload,
+} from '@/types'
 
 export async function getAll() {
   const res = await api.get<ApiListResponse<Empleado>>('/empleados')
@@ -11,26 +19,28 @@ export async function getById(id: number) {
   return res.data
 }
 
-export async function create(data: Record<string, unknown>) {
+export async function create(data: StoreEmpleadoPayload) {
   const res = await api.post<ApiSingleResponse<Empleado>>('/empleados', data)
   return res.data
 }
 
-export async function update(id: number, data: Record<string, unknown>) {
+export async function update(id: number, data: UpdateEmpleadoPayload) {
   const res = await api.put<ApiSingleResponse<Empleado>>(`/empleados/${id}`, data)
   return res.data
 }
 
-/** Desactivación lógica del empleado. */
+/** Desactivacion logica del empleado. */
 export async function remove(id: number) {
-  const res = await api.delete<ApiSingleResponse<Empleado>>(`/empleados/${id}`)
+  const res = await api.delete<void>(`/empleados/${id}`)
   return res.data
 }
 
-export async function resetPassword(
-  id: number,
-  data: { nuevaContraseña: string; nuevaContraseña_confirmation: string },
-) {
+export async function resetPassword(id: number, data: ResetPasswordPayload) {
   const res = await api.post<ApiSingleResponse<void>>(`/empleados/${id}/reset-password`, data)
+  return res.data
+}
+
+export async function getTiposEmpleado() {
+  const res = await api.get<ApiListResponse<TipoEmpleado>>('/tipos-empleado')
   return res.data
 }
