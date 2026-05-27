@@ -253,7 +253,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
-import NuevaCitaModal from './Nuevacitamodal.vue'
+import NuevaCitaModal from './NuevaCitaModal.vue'
 import EditarCitaModal from './EditarCitaModal.vue'
 import * as citasService from '@/services/citas'
 import * as personasService from '@/services/personas'
@@ -553,7 +553,7 @@ function normalizarCita(cita: Cita): AgendaItem | null {
 function nombrePersona(persona: Persona) {
   const posibleNombreCompleto = (persona as Persona & { nombreCompleto?: string }).nombreCompleto
   if (posibleNombreCompleto) return posibleNombreCompleto
-  return [persona.nombre, persona.apellidos].filter(Boolean).join(' ')
+  return [persona.nombre, persona.apellidoP].filter(Boolean).join(' ')
 }
 
 function esDentista(empleado: Empleado) {

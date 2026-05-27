@@ -1,5 +1,11 @@
 import api from '@/services/api'
-import type { Persona, ApiListResponse, ApiSingleResponse } from '@/types'
+import type {
+  Persona,
+  ApiListResponse,
+  ApiSingleResponse,
+  HistorialCitaPaciente,
+  HistorialPagoPaciente,
+} from '@/types'
 
 export async function getAll(search?: string) {
   const res = await api.get<ApiListResponse<Persona>>('/personas', {
@@ -26,5 +32,15 @@ export async function update(id: number, data: Partial<Persona>) {
 /** Eliminación lógica: el backend establece estado = 0. */
 export async function remove(id: number) {
   const res = await api.delete<ApiSingleResponse<Persona>>(`/personas/${id}`)
+  return res.data
+}
+
+export async function getHistorialCitas(idPersona: number) {
+  const res = await api.get<HistorialCitaPaciente[]>(`/personas/${idPersona}/historial-citas`)
+  return res.data
+}
+
+export async function getHistorialPagos(idPersona: number) {
+  const res = await api.get<HistorialPagoPaciente[]>(`/personas/${idPersona}/historial-pagos`)
   return res.data
 }

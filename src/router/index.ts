@@ -143,24 +143,32 @@ router.beforeEach((to) => {
   const auth = useAuthStore()
 
   // Redirigir al dashboard si ya está autenticado y navega al login
-  if (to.name === 'login' && auth.isAuthenticated) return { name: 'dashboard' }
+  if (to.name === 'login' && auth.isAuthenticated) {
+    return { name: 'dashboard' }
+  }
 
   // Verificar autenticación
-  if (to.meta.requiresAuth && !auth.isAuthenticated) return { name: 'login' }
+  if (to.meta.requiresAuth === true && !auth.isAuthenticated) {
+    return { name: 'login' }
+  }
 
   // Si el cambio de contraseña es obligatorio, forzar esa pantalla
   if (auth.isAuthenticated && auth.requiresPasswordChange && to.name !== 'change-password') {
     return { name: 'change-password' }
   }
 
-  // Verificar permisos por rol
-  if (to.meta.requiresAdmin && !auth.isAdmin) return { name: 'forbidden' }
+  // Verificar permisos por rol explícitamente
+  if (to.meta.requiresAdmin === true) {
+    if (!auth.isAdmin) return { name: 'forbidden' }
+  }
 
-  if (to.meta.requiresAdminOrDentista && !(auth.isAdmin || auth.isDentista))
-    return { name: 'forbidden' }
+  if (to.meta.requiresAdminOrDentista === true) {
+    if (!auth.isAdmin && !auth.isDentista) return { name: 'forbidden' }
+  }
 
-  if (to.meta.requiresAdminOrRecepcionista && !(auth.isAdmin || auth.isRecepcionista))
-    return { name: 'forbidden' }
+  if (to.meta.requiresAdminOrRecepcionista === true) {
+    if (!auth.isAdmin && !auth.isRecepcionista) return { name: 'forbidden' }
+  }
 })
 
 export default router

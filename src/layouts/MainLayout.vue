@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
@@ -87,6 +87,10 @@ import {
 
 const auth  = useAuthStore()
 const route = useRoute()
+
+onMounted(() => {
+  auth.fetchMe().catch(() => {})
+})
 
 const navItems = [
   { path: '/dashboard',  label: 'Dashboard',       icon: LayoutDashboard, visible: () => true },

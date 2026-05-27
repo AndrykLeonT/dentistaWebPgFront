@@ -80,6 +80,17 @@ export interface LoginResponse {
   requiresPasswordChange?: boolean
 }
 
+export interface RecoverPasswordKeywordPayload {
+  usuario: string
+  palabraClave: string
+  new_password: string
+  new_password_confirmation: string
+}
+
+export interface RecoverPasswordKeywordResponse {
+  message: string
+}
+
 // ─── Paciente ─────────────────────────────────────────────────────────────────
 
 export interface Direccion {
@@ -98,22 +109,34 @@ export interface ContactoEmergencia {
 /** Persona = Paciente en el dominio del sistema. */
 export interface Persona {
   id: number
-  expediente?: string
+  nombreCompleto: string
   nombre: string
-  apellidos: string
-  fechaNacimiento: string // YYYY-MM-DD
-  genero: 'Masculino' | 'Femenino' | 'Otro'
-  telefonoPrincipal: string
-  telefonoSecundario?: string
-  correo?: string
-  direccion?: Direccion
-  tipoSangre?: TipoSangre
-  alergias?: string
-  condicionesMedicas?: string
-  medicamentos?: string
-  contactoEmergencia?: ContactoEmergencia
-  estado?: 'Activo' | 'Inactivo'
-  ultimaVisita?: string // YYYY-MM-DD
+  apellidoP: string
+  apellidoM: string | null
+  celular: string
+  correoElectronico: string | null
+  fechaRegistro: string
+  estado?: boolean
+}
+
+export interface HistorialCitaPaciente {
+  id: number
+  fecha: string
+  hora: string
+  estado: string
+  servicio: string
+  dentista: string
+  observaciones?: string | null
+}
+
+export interface HistorialPagoPaciente {
+  id: number
+  fecha: string
+  total: number
+  efectivo: number
+  tarjeta: number
+  folioComprobante?: string | null
+  estado: string
 }
 
 // ─── Servicios ────────────────────────────────────────────────────────────────
@@ -195,27 +218,46 @@ export interface Receta {
 
 export interface Pago {
   id: number
-  folio?: string
-  fecha?: string          // YYYY-MM-DD
-  persona?: Persona
-  servicio?: Servicio
-  total: number
-  efectivo: number
-  tarjeta: number
-  // idEmpleado e idCorte los asigna el backend automáticamente
+  total: string | number
+  efectivo: string | number
+  tarjeta: string | number
+  pendiente?: string | number
+  pagado?: boolean
+  fechaRegistro?: string
+  paciente?: {
+    id: number
+    nombreCompleto: string
+  }
+  empleado?: {
+    id: number
+    nombreCompleto?: string
+    usuario?: string
+  }
+}
+
+// ─── Comprobantes ─────────────────────────────────────────────────────────────
+
+export interface Comprobante {
+  id: number
+  idPago: number
+  folio: string
+  fechaEmision: string
+  observaciones?: string
+  estado: boolean
 }
 
 // ─── Cortes de caja ───────────────────────────────────────────────────────────
 
 export interface Corte {
   id: number
-  fDeCaja: string         // fecha de apertura (YYYY-MM-DD HH:mm:ss)
-  fechaFin?: string       // fecha de cierre  (YYYY-MM-DD HH:mm:ss)
-  totalEfectivo?: number
-  totalTarjeta?: number
-  totalGeneral?: number
+  fechaInicio: string
+  fechaFin?: string | null
+  fDeCaja: string | number
+  tEfectivo: string | number
+  tTarjeta: string | number
+  totalRecaudado: string | number
   numPagos?: number
-  activo: boolean
+  activo?: boolean
 }
 
 // ─── Wrappers de respuesta API ────────────────────────────────────────────────
@@ -233,4 +275,71 @@ export interface ApiListResponse<T> {
 export interface ApiSingleResponse<T> {
   data: T
   message?: string
+}
+
+// ─── Inventario ───────────────────────────────────────────────────────────────
+
+export interface ProductoInventario {
+  id: number
+  nombre: string
+  unidadMedida: string
+  descripcion?: string | null
+  stockActual: number
+  estado?: boolean
+  bajoStock?: boolean
+}
+
+export type TipoMovimientoInventario = 'entrada' | 'salida' | 'ajuste'
+
+export interface MovimientoInventario {
+  id: number
+  idProductoInventario?: number
+  idEmpleado?: number
+  tipoMovimiento: TipoMovimientoInventario
+  cantidad: number
+  stockAnterior?: number
+  stockNuevo?: number
+  motivo?: string | null
+  fechaRegistro?: string
+  producto?: ProductoInventario
+  empleado?: { id: number; nombreCompleto?: string }
+}
+
+export interface ConsumoServicio {
+  id: number
+  idServicio: number
+  servicio?: string
+  idProductoInventario: number
+  producto?: string
+  cantidad: number
+  activo?: boolean
+}
+
+export interface StoreConsumoServicioPayload {
+  idServicio: number
+  idProductoInventario: number
+  cantidad: number
+}
+
+export interface DashboardResumen {
+  pacientesActivos: number
+  citasHoy: number
+  ingresosHoy: number
+  productosBajoStock: number
+  citasProximas: Array<{
+    id: number
+    hora?: string
+    estado?: string
+    paciente?: string
+    servicio?: string
+    dentista?: string
+  }>
+  alertasInventario: Array<{
+    id?: number
+    nombre: string
+    stockActual?: number
+    stock?: number
+    minimo?: number
+    sinStock?: boolean
+  }>
 }

@@ -7,6 +7,7 @@
         <p class="text-slate-600 text-sm mt-1">Gestión de expedientes y datos de pacientes</p>
       </div>
       <button
+        v-if="puedeCrear"
         @click="registrarPaciente"
         class="h-9 px-4 bg-blue-500 hover:bg-blue-600 rounded-md text-white text-sm font-medium flex items-center gap-2 transition cursor-pointer"
       >
@@ -64,42 +65,52 @@
       </div>
 
       <!-- Filas -->
+      <div v-if="loading" class="px-6 py-8 text-center text-slate-500">
+        Cargando pacientes...
+      </div>
+      <div v-else-if="error" class="px-6 py-8 text-center text-red-500">
+        {{ error }}
+      </div>
+      <div v-else-if="pacientesFiltrados.length === 0" class="px-6 py-8 text-center text-slate-500">
+        No se encontraron pacientes.
+      </div>
       <div
+        v-else
         v-for="paciente in pacientesFiltrados"
         :key="paciente.id"
         class="grid grid-cols-[100px_1fr_160px_1fr_110px_90px_90px] border-b border-blue-200 last:border-b-0 px-2 hover:bg-slate-50 transition"
       >
         <!-- Expediente -->
         <div class="px-2 py-3 flex items-center">
-          <span class="text-blue-950 text-sm font-medium">{{ paciente.expediente }}</span>
+          <span class="text-blue-950 text-sm font-medium">EXP-{{ paciente.id.toString().padStart(3, '0') }}</span>
         </div>
 
         <!-- Nombre con avatar -->
         <div class="px-2 py-3 flex items-center gap-2">
           <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shrink-0">
-            <span class="text-white text-xs">{{ paciente.iniciales }}</span>
+            <span class="text-white text-xs">{{ paciente.nombreCompleto.substring(0, 2).toUpperCase() }}</span>
           </div>
-          <span class="text-blue-950 text-sm">{{ paciente.nombre }}</span>
+          <span class="text-blue-950 text-sm">{{ paciente.nombreCompleto }}</span>
         </div>
 
         <!-- Teléfono -->
         <div class="px-2 py-3 flex items-center gap-1.5">
           <Phone class="w-4 h-4 text-slate-600 shrink-0" />
-          <span class="text-blue-950 text-sm">{{ paciente.telefono }}</span>
+          <span class="text-blue-950 text-sm">{{ paciente.celular }}</span>
         </div>
 
         <!-- Correo -->
         <div class="px-2 py-3 flex items-center gap-1.5">
-          <template v-if="paciente.correo">
+          <template v-if="paciente.correoElectronico">
             <Mail class="w-4 h-4 text-slate-600 shrink-0" />
-            <span class="text-blue-950 text-sm truncate">{{ paciente.correo }}</span>
+            <span class="text-blue-950 text-sm truncate">{{ paciente.correoElectronico }}</span>
           </template>
           <span v-else class="text-slate-600 text-sm">—</span>
         </div>
 
         <!-- Última visita -->
         <div class="px-2 py-3 flex items-center">
-          <span class="text-blue-950 text-sm">{{ paciente.ultimaVisita }}</span>
+          <span class="text-blue-950 text-sm">{{ new Date(paciente.fechaRegistro).toLocaleDateString() }}</span>
         </div>
 
         <!-- Estado -->
@@ -107,10 +118,10 @@
           <span
             :class="[
               'px-2 py-0.5 rounded-md text-white text-xs font-medium',
-              paciente.estado === 'Activo' ? 'bg-emerald-600' : 'bg-slate-400',
+              paciente.estado !== false ? 'bg-emerald-600' : 'bg-slate-400',
             ]"
           >
-            {{ paciente.estado }}
+            {{ paciente.estado !== false ? 'Activo' : 'Inactivo' }}
           </span>
         </div>
 
@@ -124,6 +135,7 @@
             <Eye class="w-4 h-4 text-blue-950" />
           </button>
           <button
+            v-if="puedeCrear"
             @click="editarPaciente(paciente)"
             class="w-8 h-8 rounded-md flex items-center justify-center hover:bg-slate-100 transition cursor-pointer"
             title="Editar"
@@ -139,107 +151,82 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, Plus, Phone, Mail, Eye, Pencil } from 'lucide-vue-next'
 import RegistrarPacienteDrawer from '../../components/pacientes/RegistrarPacienteDrawer.vue'
+import * as personasService from '@/services/personas'
+import type { Persona } from '@/types'
+import { toast } from 'vue-sonner'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
 
 const mostrarDrawer = ref(false)
 const router = useRouter()
 const busqueda = ref('')
 const filtroEstado = ref('')
 
-interface Paciente {
-  id: number
-  expediente: string
-  iniciales: string
-  nombre: string
-  telefono: string
-  correo: string
-  ultimaVisita: string
-  estado: string
-}
+const pacientes = ref<Persona[]>([])
+const loading = ref(false)
+const error = ref('')
 
-const pacientes: Paciente[] = [
-  {
-    id: 1,
-    expediente: 'EXP-001',
-    iniciales: 'MG',
-    nombre: 'María García Pérez',
-    telefono: '+52 55 1111 2222',
-    correo: 'maria.garcia@email.com',
-    ultimaVisita: '14/3/2026',
-    estado: 'Activo',
-  },
-  {
-    id: 2,
-    expediente: 'EXP-002',
-    iniciales: 'RM',
-    nombre: 'Roberto Mendoza Silva',
-    telefono: '+52 55 2222 3333',
-    correo: 'roberto.mendoza@email.com',
-    ultimaVisita: '9/3/2026',
-    estado: 'Activo',
-  },
-  {
-    id: 3,
-    expediente: 'EXP-003',
-    iniciales: 'ST',
-    nombre: 'Sofía Torres Ramírez',
-    telefono: '+52 55 3333 4444',
-    correo: 'sofia.torres@email.com',
-    ultimaVisita: '11/3/2026',
-    estado: 'Activo',
-  },
-  {
-    id: 4,
-    expediente: 'EXP-004',
-    iniciales: 'JF',
-    nombre: 'Jorge Flores Castillo',
-    telefono: '+52 55 4444 5555',
-    correo: '',
-    ultimaVisita: '7/3/2026',
-    estado: 'Activo',
-  },
-  {
-    id: 5,
-    expediente: 'EXP-005',
-    iniciales: 'PR',
-    nombre: 'Patricia Ruiz Moreno',
-    telefono: '+52 55 5555 6666',
-    correo: 'patricia.ruiz@email.com',
-    ultimaVisita: '4/3/2026',
-    estado: 'Activo',
-  },
-]
+const auth = useAuthStore()
+const puedeCrear = computed(() => auth.isAdmin || auth.isRecepcionista)
 
 const pacientesFiltrados = computed(() => {
-  return pacientes.filter((p) => {
+  return pacientes.value.filter((p) => {
     const coincideBusqueda =
-      p.nombre.toLowerCase().includes(busqueda.value.toLowerCase()) ||
-      p.expediente.toLowerCase().includes(busqueda.value.toLowerCase()) ||
-      p.telefono.includes(busqueda.value)
+      p.nombreCompleto.toLowerCase().includes(busqueda.value.toLowerCase()) ||
+      p.celular.includes(busqueda.value)
 
-    const coincideEstado = filtroEstado.value === '' || p.estado === filtroEstado.value
+    const activoStr = p.estado === false ? 'Inactivo' : 'Activo'
+    const coincideEstado = filtroEstado.value === '' || activoStr === filtroEstado.value
 
     return coincideBusqueda && coincideEstado
   })
+})
+
+async function cargarPacientes() {
+  loading.value = true
+  error.value = ''
+  try {
+    const data = await personasService.getAll(busqueda.value ? busqueda.value : undefined)
+    // The response is { data: Persona[], meta: {...} } or just { data: Persona[] }
+    pacientes.value = data.data
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      if (e.response?.status === 403) {
+        error.value = 'No tienes permisos para ver pacientes.'
+      } else {
+        error.value = 'Error al cargar pacientes.'
+      }
+    } else {
+      error.value = 'Error desconocido al cargar pacientes.'
+    }
+    toast.error(error.value)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  cargarPacientes()
 })
 
 function registrarPaciente() {
   mostrarDrawer.value = true
 }
 
-function verPaciente(paciente: Paciente) {
+function verPaciente(paciente: Persona) {
   router.push(`/pacientes/${paciente.id}/historial`)
 }
 
-function editarPaciente(paciente: Paciente) {
+function editarPaciente(paciente: Persona) {
   router.push(`/pacientes/${paciente.id}/editar`)
 }
 
-function onPacienteGuardado(datos: any) {
-  console.log('Paciente guardado:', datos)
-  // Aquí se conectará con la API en el futuro
+function onPacienteGuardado() {
+  toast.success('Paciente guardado correctamente')
+  cargarPacientes()
 }
 </script>

@@ -20,6 +20,7 @@
           <button
             @click="cerrar"
             class="text-blue-950/70 hover:text-blue-950 transition cursor-pointer mt-1"
+            :disabled="loading"
           >
             <X class="w-4 h-4" />
           </button>
@@ -38,37 +39,41 @@
                 v-model="form.nombre"
                 type="text"
                 placeholder="Nombre"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
+                :disabled="loading"
+                class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition"
+                :class="fieldErrors['nombre'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
               />
+              <p v-if="fieldErrors['nombre']" class="text-red-500 text-xs">
+                {{ fieldErrors['nombre'][0] }}
+              </p>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Apellidos *</label>
+              <label class="text-blue-950 text-sm font-medium">Apellido Paterno *</label>
               <input
-                v-model="form.apellidos"
+                v-model="form.apellidoP"
                 type="text"
-                placeholder="Apellidos"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
+                placeholder="Apellido Paterno"
+                :disabled="loading"
+                class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition"
+                :class="fieldErrors['apellidoP'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
               />
+              <p v-if="fieldErrors['apellidoP']" class="text-red-500 text-xs">
+                {{ fieldErrors['apellidoP'][0] }}
+              </p>
             </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Fecha de Nacimiento *</label>
+            <div class="flex flex-col gap-2 col-span-2">
+              <label class="text-blue-950 text-sm font-medium">Apellido Materno</label>
               <input
-                v-model="form.fechaNacimiento"
-                type="date"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
+                v-model="form.apellidoM"
+                type="text"
+                placeholder="Apellido Materno"
+                :disabled="loading"
+                class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition"
+                :class="fieldErrors['apellidoM'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
               />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Género *</label>
-              <select
-                v-model="form.genero"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition cursor-pointer"
-              >
-                <option value="">Selecciona</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Otro">Otro</option>
-              </select>
+              <p v-if="fieldErrors['apellidoM']" class="text-red-500 text-xs">
+                {{ fieldErrors['apellidoM'][0] }}
+              </p>
             </div>
           </div>
         </section>
@@ -78,172 +83,58 @@
           <h3 class="text-blue-950 text-lg font-medium">Información de Contacto</h3>
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Teléfono Principal *</label>
+              <label class="text-blue-950 text-sm font-medium">Celular *</label>
               <input
-                v-model="form.telefonoPrincipal"
+                v-model="form.celular"
                 type="text"
-                placeholder="+52 55 1234 5678"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
+                placeholder="6120000000"
+                :disabled="loading"
+                class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition"
+                :class="fieldErrors['celular'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
               />
+              <p v-if="fieldErrors['celular']" class="text-red-500 text-xs">
+                {{ fieldErrors['celular'][0] }}
+              </p>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Teléfono Secundario</label>
-              <input
-                v-model="form.telefonoSecundario"
-                type="text"
-                placeholder="+52 55 8765 4321"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-            <div class="flex flex-col gap-2 col-span-2">
               <label class="text-blue-950 text-sm font-medium">Correo Electrónico</label>
               <input
-                v-model="form.correo"
+                v-model="form.correoElectronico"
                 type="email"
                 placeholder="correo@ejemplo.com"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
+                :disabled="loading"
+                class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition"
+                :class="fieldErrors['correoElectronico'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
               />
+              <p v-if="fieldErrors['correoElectronico']" class="text-red-500 text-xs">
+                {{ fieldErrors['correoElectronico'][0] }}
+              </p>
             </div>
           </div>
         </section>
 
-        <!-- Dirección -->
-        <section class="flex flex-col gap-4">
-          <h3 class="text-blue-950 text-lg font-medium">Dirección</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Calle</label>
-              <input
-                v-model="form.calle"
-                type="text"
-                placeholder="Calle"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Número</label>
-              <input
-                v-model="form.numero"
-                type="text"
-                placeholder="Número"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Colonia</label>
-              <input
-                v-model="form.colonia"
-                type="text"
-                placeholder="Colonia"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Ciudad</label>
-              <input
-                v-model="form.ciudad"
-                type="text"
-                placeholder="Ciudad"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Código Postal</label>
-              <input
-                v-model="form.codigoPostal"
-                type="text"
-                placeholder="00000"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-          </div>
-        </section>
-
-        <!-- Información Médica -->
-        <section class="flex flex-col gap-4">
-          <h3 class="text-blue-950 text-lg font-medium">Información Médica</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Tipo de Sangre</label>
-              <select
-                v-model="form.tipoSangre"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition cursor-pointer"
-              >
-                <option value="">Selecciona</option>
-                <option v-for="tipo in tiposSangre" :key="tipo" :value="tipo">{{ tipo }}</option>
-              </select>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Alergias Conocidas</label>
-              <input
-                v-model="form.alergias"
-                type="text"
-                placeholder="Ej: Penicilina, Látex"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-            <div class="flex flex-col gap-2 col-span-2">
-              <label class="text-blue-950 text-sm font-medium"
-                >Enfermedades o Condiciones Médicas</label
-              >
-              <textarea
-                v-model="form.condicionesMedicas"
-                rows="3"
-                placeholder="Describe condiciones médicas relevantes..."
-                class="px-3 py-2 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition resize-none"
-              />
-            </div>
-            <div class="flex flex-col gap-2 col-span-2">
-              <label class="text-blue-950 text-sm font-medium">Medicamentos Actuales</label>
-              <textarea
-                v-model="form.medicamentos"
-                rows="3"
-                placeholder="Lista de medicamentos que toma actualmente..."
-                class="px-3 py-2 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition resize-none"
-              />
-            </div>
-          </div>
-        </section>
-
-        <!-- Contacto de Emergencia -->
-        <section class="flex flex-col gap-4">
-          <h3 class="text-blue-950 text-lg font-medium">Contacto de Emergencia</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Nombre</label>
-              <input
-                v-model="form.contactoEmergenciaNombre"
-                type="text"
-                placeholder="Nombre del contacto"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label class="text-blue-950 text-sm font-medium">Teléfono</label>
-              <input
-                v-model="form.contactoEmergenciaTel"
-                type="text"
-                placeholder="+52 55 1234 5678"
-                class="h-9 px-3 bg-white rounded-md border border-slate-200 text-slate-600 text-sm outline-none focus:border-blue-400 transition"
-              />
-            </div>
-          </div>
-        </section>
+        <!-- Mensaje de error general -->
+        <div v-if="globalError" class="p-3 bg-red-50 rounded-md border border-red-200">
+          <p class="text-red-600 text-sm">{{ globalError }}</p>
+        </div>
       </div>
 
       <!-- Footer con botones -->
       <div class="px-6 py-4 border-t border-blue-200 flex justify-end gap-2 shrink-0 bg-slate-50">
         <button
           @click="cerrar"
-          class="h-9 px-4 bg-slate-50 hover:bg-slate-100 rounded-md outline outline-[0.80px] outline-blue-200 text-blue-950 text-sm font-medium transition cursor-pointer"
+          :disabled="loading"
+          class="h-9 px-4 bg-slate-50 hover:bg-slate-100 rounded-md outline outline-[0.80px] outline-blue-200 text-blue-950 text-sm font-medium transition cursor-pointer disabled:opacity-50"
         >
           Cancelar
         </button>
         <button
           @click="guardar"
-          class="h-9 px-4 bg-blue-500 hover:bg-blue-600 rounded-md text-white text-sm font-medium transition cursor-pointer"
+          :disabled="loading"
+          class="h-9 px-4 bg-blue-500 hover:bg-blue-600 rounded-md text-white text-sm font-medium transition cursor-pointer flex items-center gap-2 disabled:opacity-50"
         >
-          Guardar Paciente
+          <span v-if="loading">Guardando...</span>
+          <span v-else>Guardar Paciente</span>
         </button>
       </div>
     </div>
@@ -251,42 +142,62 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { X } from 'lucide-vue-next'
+import * as personasService from '@/services/personas'
+import { useApiError } from '@/composables/useApiError'
 
-defineProps<{ modelValue: boolean }>()
+const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue', 'guardado'])
 
-const tiposSangre = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+const loading = ref(false)
 
 const form = reactive({
   nombre: '',
-  apellidos: '',
-  fechaNacimiento: '',
-  genero: '',
-  telefonoPrincipal: '',
-  telefonoSecundario: '',
-  correo: '',
-  calle: '',
-  numero: '',
-  colonia: '',
-  ciudad: '',
-  codigoPostal: '',
-  tipoSangre: '',
-  alergias: '',
-  condicionesMedicas: '',
-  medicamentos: '',
-  contactoEmergenciaNombre: '',
-  contactoEmergenciaTel: '',
+  apellidoP: '',
+  apellidoM: '',
+  celular: '',
+  correoElectronico: '',
+})
+
+const { fieldErrors, globalError, handleError, clearErrors } = useApiError()
+
+watch(() => props.modelValue, (newVal) => {
+  if (newVal) {
+    // Resetear form al abrir
+    form.nombre = ''
+    form.apellidoP = ''
+    form.apellidoM = ''
+    form.celular = ''
+    form.correoElectronico = ''
+    clearErrors()
+  }
 })
 
 function cerrar() {
+  if (loading.value) return
   emit('update:modelValue', false)
 }
 
-function guardar() {
-  // Sin validación por ahora — listo para conectar con API
-  emit('guardado', { ...form })
-  cerrar()
+async function guardar() {
+  if (loading.value) return
+  loading.value = true
+  clearErrors()
+
+  try {
+    const data = await personasService.create({
+      nombre: form.nombre,
+      apellidoP: form.apellidoP,
+      apellidoM: form.apellidoM,
+      celular: form.celular,
+      correoElectronico: form.correoElectronico || undefined,
+    })
+    emit('guardado', data.data)
+    cerrar()
+  } catch (error) {
+    handleError(error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>

@@ -1,8 +1,14 @@
 import api from '@/services/api'
-import type { Empleado, ApiSingleResponse, LoginResponse } from '@/types'
+import type {
+  Empleado,
+  ApiSingleResponse,
+  LoginResponse,
+  RecoverPasswordKeywordPayload,
+  RecoverPasswordKeywordResponse,
+} from '@/types'
 
-export async function login(usuario: string, contraseña: string) {
-  const res = await api.post<LoginResponse>('/login', { usuario, contraseña })
+export async function login(correoElectronico: string, password: string) {
+  const res = await api.post<LoginResponse>('/login', { usuario: correoElectronico, 'contraseña': password })
   return res.data
 }
 
@@ -17,14 +23,19 @@ export async function fetchMe() {
 }
 
 export async function changePassword(
-  contraseñaActual: string,
-  nuevaContraseña: string,
-  nuevaContraseña_confirmation: string,
+  current_password: string,
+  new_password: string,
+  new_password_confirmation: string,
 ) {
   const res = await api.post('/change-password', {
-    contraseñaActual,
-    nuevaContraseña,
-    nuevaContraseña_confirmation,
+    current_password,
+    new_password,
+    new_password_confirmation,
   })
+  return res.data
+}
+
+export async function recoverPasswordByKeyword(payload: RecoverPasswordKeywordPayload) {
+  const res = await api.post<RecoverPasswordKeywordResponse>('/recover-password-keyword', payload)
   return res.data
 }

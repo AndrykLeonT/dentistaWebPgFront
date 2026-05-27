@@ -11,16 +11,16 @@
         <div class="flex flex-col gap-1">
           <label class="text-blue-950 text-sm font-medium">Contraseña actual</label>
           <input
-            v-model="form.contraseñaActual"
+            v-model="form.current_password"
             type="password"
             placeholder="••••••••"
             autocomplete="current-password"
             :disabled="loading"
             class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition disabled:opacity-50"
-            :class="fieldErrors['contraseñaActual'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
+            :class="fieldErrors['current_password'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
           />
-          <p v-if="fieldErrors['contraseñaActual']" class="text-red-500 text-xs">
-            {{ fieldErrors['contraseñaActual'][0] }}
+          <p v-if="fieldErrors['current_password']" class="text-red-500 text-xs">
+            {{ fieldErrors['current_password'][0] }}
           </p>
         </div>
 
@@ -28,16 +28,16 @@
         <div class="flex flex-col gap-1">
           <label class="text-blue-950 text-sm font-medium">Nueva contraseña</label>
           <input
-            v-model="form.nuevaContraseña"
+            v-model="form.new_password"
             type="password"
             placeholder="••••••••"
             autocomplete="new-password"
             :disabled="loading"
             class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition disabled:opacity-50"
-            :class="fieldErrors['nuevaContraseña'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
+            :class="fieldErrors['new_password'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
           />
-          <p v-if="fieldErrors['nuevaContraseña']" class="text-red-500 text-xs">
-            {{ fieldErrors['nuevaContraseña'][0] }}
+          <p v-if="fieldErrors['new_password']" class="text-red-500 text-xs">
+            {{ fieldErrors['new_password'][0] }}
           </p>
         </div>
 
@@ -45,16 +45,16 @@
         <div class="flex flex-col gap-1">
           <label class="text-blue-950 text-sm font-medium">Confirmar contraseña</label>
           <input
-            v-model="form.nuevaContraseña_confirmation"
+            v-model="form.new_password_confirmation"
             type="password"
             placeholder="••••••••"
             autocomplete="new-password"
             :disabled="loading"
             class="h-9 px-3 bg-white rounded-md border text-slate-600 text-sm outline-none transition disabled:opacity-50"
-            :class="fieldErrors['nuevaContraseña_confirmation'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
+            :class="fieldErrors['new_password_confirmation'] ? 'border-red-400' : 'border-slate-200 focus:border-blue-400'"
           />
-          <p v-if="fieldErrors['nuevaContraseña_confirmation']" class="text-red-500 text-xs">
-            {{ fieldErrors['nuevaContraseña_confirmation'][0] }}
+          <p v-if="fieldErrors['new_password_confirmation']" class="text-red-500 text-xs">
+            {{ fieldErrors['new_password_confirmation'][0] }}
           </p>
         </div>
 
@@ -87,9 +87,9 @@ const { globalError, fieldErrors, handleError, clearErrors } = useApiError()
 
 const loading = ref(false)
 const form = reactive({
-  contraseñaActual: '',
-  nuevaContraseña: '',
-  nuevaContraseña_confirmation: '',
+  current_password: '',
+  new_password: '',
+  new_password_confirmation: '',
 })
 
 async function handleSubmit() {
@@ -99,9 +99,9 @@ async function handleSubmit() {
 
   try {
     await authService.changePassword(
-      form.contraseñaActual,
-      form.nuevaContraseña,
-      form.nuevaContraseña_confirmation,
+      form.current_password,
+      form.new_password,
+      form.new_password_confirmation,
     )
     auth.markPasswordChanged()
     toast.success('Contraseña actualizada correctamente')

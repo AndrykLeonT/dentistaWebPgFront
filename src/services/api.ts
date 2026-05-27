@@ -1,6 +1,7 @@
 import axios from 'axios'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import { toast } from 'vue-sonner'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api',
@@ -22,10 +23,22 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response?.status
 
-    // Saltar si es el endpoint de login: dejar que LoginView muestre el error de credenciales
-    if (status === 401 && !error.config?.url?.endsWith('/login')) {
+    const authPublicEndpoints = ['/login', '/recover-password-keyword']
+
+    // Saltar endpoints publicos de auth: cada vista muestra su error de credenciales o palabra clave.
+    if (
+      status === 401 &&
+      !authPublicEndpoints.some((endpoint) => error.config?.url?.endsWith(endpoint))
+    ) {
       useAuthStore().clearSession()
       router.push('/login')
+    }
+
+    if (status === 403) {
+      toast.error('No tienes los permisos necesarios.')
+      if (error.config?.method === 'get') {
+        router.push('/forbidden')
+      }
     }
 
     return Promise.reject(error)

@@ -33,7 +33,7 @@
         <div class="flex flex-col gap-2">
           <label class="text-blue-950 text-sm font-medium">Usuario</label>
           <input
-            v-model="usuario"
+            v-model="correoElectronico"
             type="text"
             placeholder="Tu nombre de usuario"
             autocomplete="username"
@@ -46,7 +46,7 @@
         <div class="flex flex-col gap-2">
           <label class="text-blue-950 text-sm font-medium">Contraseña</label>
           <input
-            v-model="contraseña"
+            v-model="password"
             type="password"
             placeholder="••••••••"
             autocomplete="current-password"
@@ -89,8 +89,8 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 const auth           = useAuthStore()
-const usuario        = ref('')
-const contraseña     = ref('')
+const correoElectronico = ref('')
+const password       = ref('')
 const loading        = ref(false)
 const credentialError = ref('')
 
@@ -100,7 +100,7 @@ async function handleLogin() {
   loading.value = true
 
   try {
-    await auth.login(usuario.value, contraseña.value)
+    await auth.login(correoElectronico.value, password.value)
     // La redirección la hace auth.login() internamente
   } catch (err) {
     if (axios.isAxiosError(err)) {

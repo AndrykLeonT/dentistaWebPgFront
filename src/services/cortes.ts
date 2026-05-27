@@ -21,13 +21,13 @@ export async function getActivo() {
 }
 
 /** Abrir un nuevo corte de caja. */
-export async function create(data: { fDeCaja: string }) {
-  const res = await api.post<ApiSingleResponse<Corte>>('/cortes', data)
+export async function create(data?: { fDeCaja?: number | string }) {
+  const res = await api.post<ApiSingleResponse<Corte>>('/cortes', data || {})
   return res.data
 }
 
 /** Cerrar un corte de caja existente. */
-export async function close(id: number, data: { fechaFin: string }) {
-  const res = await api.put<ApiSingleResponse<Corte>>(`/cortes/${id}`, data)
+export async function close(id: number, data?: { fechaFin?: string }) {
+  const res = await api.put<ApiSingleResponse<Corte>>(`/cortes/${id}`, data || {})
   return res.data
 }
