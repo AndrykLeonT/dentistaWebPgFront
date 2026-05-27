@@ -11,7 +11,7 @@ export type TipoSangre = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 /** Objeto tipoEmpleado anidado en la respuesta de /login y /me. */
 export interface TipoEmpleado {
   id: number
-  nombre: string
+  nombre: 'Administrador' | 'admin' | 'Dentista' | 'Recepcionista' | string
   descripcion?: string
 }
 
@@ -129,25 +129,38 @@ export interface Servicio {
   nombre: string
   claseServicio?: ClaseServicio
   descripcion?: string
-  duracion: number        // minutos
-  precio: number          // MXN
-  multipleSesiones: boolean
-  numSesiones: number
+  duracion?: string       // HH:mm:ss
+  costo?: string
+  precio?: number         // MXN
+  multipleSesiones?: boolean
+  numSesiones?: number
   notas?: string
-  activo: boolean
+  activo?: boolean
 }
 
 // ─── Citas ────────────────────────────────────────────────────────────────────
 
 export interface Cita {
   id: number
-  fecha: string           // YYYY-MM-DD
-  horaInicio: string      // HH:mm
+  fecha?: string          // YYYY-MM-DD
+  fechaRegistro?: string
+  fechaProgramada?: string
+  hora?: string           // HH:mm
+  horaInicio?: string     // HH:mm
   horaFin?: string        // HH:mm
+  paciente?: {
+    id: number
+    nombreCompleto: string
+  }
   persona?: Persona
+  dentista?: {
+    id: number
+    nombreCompleto: string
+  }
   empleado?: Empleado
   servicio?: Servicio
-  estado: EstadoCita
+  estado?: EstadoCita
+  duracion?: string
   motivo?: string
   notasClinicas?: string
 }

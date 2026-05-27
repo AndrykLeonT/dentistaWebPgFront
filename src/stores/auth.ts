@@ -23,12 +23,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => token.value !== null)
 
-  /** 'administrador' | 'dentista' | 'recepcionista' | '' */
+  /** 'administrador' | 'admin' | 'dentista' | 'recepcionista' | '' */
   const rol = computed(() =>
-    empleado.value?.tipoEmpleado.nombre.toLowerCase() ?? '',
+    empleado.value?.tipoEmpleado.nombre.trim().toLowerCase() ?? '',
   )
 
-  const isAdmin         = computed(() => rol.value === 'administrador')
+  const isAdmin         = computed(() => rol.value === 'administrador' || rol.value === 'admin')
   const isDentista      = computed(() => rol.value === 'dentista')
   const isRecepcionista = computed(() => rol.value === 'recepcionista')
 

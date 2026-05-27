@@ -2,9 +2,19 @@ import api from '@/services/api'
 import type { Cita, ApiListResponse, ApiSingleResponse } from '@/types'
 
 interface CitaFiltros {
-  fecha?:       string  // YYYY-MM-DD
+  fecha?: string
   paciente_id?: number
   servicio_id?: number
+}
+
+export interface CitaPayload {
+  idPersona: number
+  idServicio: number
+  idEmpleado: number
+  fechaProgramada: string
+  hora: string
+  duracion?: string
+  motivo?: string
 }
 
 export async function getAll(filters?: CitaFiltros) {
@@ -17,18 +27,16 @@ export async function getById(id: number) {
   return res.data
 }
 
-export async function create(data: Record<string, unknown>) {
+export async function create(data: CitaPayload) {
   const res = await api.post<ApiSingleResponse<Cita>>('/citas', data)
   return res.data
 }
 
-export async function update(id: number, data: Record<string, unknown>) {
+export async function update(id: number, data: CitaPayload) {
   const res = await api.put<ApiSingleResponse<Cita>>(`/citas/${id}`, data)
   return res.data
 }
 
-/** Cancelación lógica de la cita. */
 export async function cancel(id: number) {
-  const res = await api.delete<ApiSingleResponse<Cita>>(`/citas/${id}`)
-  return res.data
+  await api.delete(`/citas/${id}`)
 }
