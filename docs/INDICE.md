@@ -13,6 +13,8 @@
 | `docs/modulos/05-auth-palabra-clave.md` | Fase frontend de recuperacion de contrasena por palabra clave | Vigente |
 | `docs/modulos/06-cierre-integral.md` | Cierre integral frontend preparado para contratos backend pendientes | Vigente |
 | `docs/backend/REQUERIMIENTOS_BACKEND_PARA_FRONTEND.md` | Contratos y cambios requeridos del backend para completar frontend | Vigente |
+| `docs/exposicion/REPORTE_GENERAL_EXPOSICION.md` | Reporte tecnico general para exposicion final | Vigente |
+| `docs/exposicion/GUION_EXPOSICION.md` | Guion oral resumido para practicar la exposicion | Vigente |
 
 ## Reportes generales previos
 
@@ -32,6 +34,7 @@ la presente validacion:
 2. Leer `docs/modulos/01-validacion-integraciones.md`.
 3. Leer `docs/modulos/06-cierre-integral.md`.
 4. Leer `docs/backend/REQUERIMIENTOS_BACKEND_PARA_FRONTEND.md` antes de tocar Laravel.
-5. Leer `docs/modulos/05-auth-palabra-clave.md` antes de ajustar recuperacion de contrasena.
-6. Consultar `docs/modulos/00-datos-prueba.md` antes de crear, editar o limpiar
+5. Leer `docs/exposicion/REPORTE_GENERAL_EXPOSICION.md` para preparar la presentacion final.
+6. Leer `docs/modulos/05-auth-palabra-clave.md` antes de ajustar recuperacion de contrasena.
+7. Consultar `docs/modulos/00-datos-prueba.md` antes de crear, editar o limpiar
    registros de validacion.
